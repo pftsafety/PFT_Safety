@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blur:saturate(180%) blur(28px);
+  --blur-light:saturate(150%) blur(16px);
+  --font:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:linear-gradient(135deg,#0f0c29 0%,#302b63 40%,#24243e 70%,#1a1040 100%);min-height:100vh;position:relative}
+
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.35;animation:drift 12s ease-in-out infinite;pointer-events:none;z-index:0}
+.orb1{width:520px;height:520px;background:radial-gradient(circle,#7c3aed,transparent);top:-120px;left:-100px}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,#2563eb,transparent);bottom:-80px;right:-60px;animation-delay:-5s}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,#db2777,transparent);top:40%;left:55%;animation-delay:-9s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,25px) scale(0.97)}}
+
+.screen{display:none;position:fixed;inset:0;z-index:10;align-items:center;justify-content:center}
+.screen.active{display:flex}
+
+/* ─── Glass ─── */
+.glass-deep{
+  background:rgba(255,255,255,0.13);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid rgba(255,255,255,0.36);
+  box-shadow:0 24px 64px rgba(0,0,0,0.28),0 1.5px 0 rgba(255,255,255,0.55) inset;
+  border-radius:28px;
+}
+
+/* ─── Auth Card ─── */
+#lock-screen{flex-direction:column;overflow-y:auto;padding:1rem 0}
+.auth-card{
+  width:360px;padding:2.25rem 2rem 1.75rem;
+  display:flex;flex-direction:column;align-items:center;
+  animation:rise .5s cubic-bezier(.22,1,.36,1) both;
+  position:relative;overflow:hidden;
+}
+.auth-card::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:none}}
+
+.auth-tabs{display:flex;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:3px;gap:2px;margin-bottom:1.75rem;width:100%}
+.auth-tab{flex:1;padding:7px 0;border-radius:9px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.45);cursor:pointer;transition:all .2s;text-align:center;border:none;background:transparent;font-family:var(--font)}
+.auth-tab.active{background:rgba(255,255,255,0.15);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15),0 1px 0 rgba(255,255,255,0.2) inset}
+
+.auth-panel{display:none;width:100%;flex-direction:column;align-items:center}
+.auth-panel.active{display:flex}
+
+/* keypad */
+.lock-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.28),rgba(255,255,255,0.07));border:1.5px solid rgba(255,255,255,0.45);box-shadow:0 4px 20px rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.55) inset;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:.9rem}
+.lock-title{font-size:19px;font-weight:600;color:#fff;letter-spacing:-.3px;margin-bottom:3px;text-align:center}
+.lock-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:1.5rem;text-align:center}
+.pin-dots{display:flex;gap:13px;margin-bottom:1.4rem}
+.dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.38);background:transparent;transition:all .15s cubic-bezier(.34,1.56,.64,1)}
+.dot.filled{background:#fff;border-color:#fff;transform:scale(1.15);box-shadow:0 0 10px rgba(255,255,255,0.55)}
+.dot.error{background:#f87171;border-color:#f87171;box-shadow:0 0 10px rgba(248,113,113,0.55)}
+.dot.success{background:#34d399;border-color:#34d399;box-shadow:0 0 10px rgba(52,211,153,0.55)}
+.keypad{display:grid;grid-template-columns:repeat(3,66px);gap:9px}
+.key{height:54px;background:rgba(255,255,255,0.11);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.26);border-radius:13px;font-size:21px;font-weight:400;color:#fff;cursor:pointer;transition:all .12s ease;display:flex;align-items:center;justify-content:center;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.14),0 1px 0 rgba(255,255,255,0.22) inset;position:relative;overflow:hidden}
+.key::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.11) 0%,transparent 60%);pointer-events:none}
+.key:hover{background:rgba(255,255,255,0.2);transform:scale(1.04)}
+.key:active{transform:scale(0.93)}
+.key.action{font-size:12px;color:rgba(255,255,255,0.65)}
+.key.action svg{width:19px;height:19px;fill:none;stroke:rgba(255,255,255,0.72);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lock-err{font-size:12px;color:#fca5a5;min-height:17px;margin-top:.55rem;text-align:center}
+.admin-toggle{margin-top:1.1rem;font-size:12px;color:rgba(255,255,255,0.38);cursor:pointer;transition:color .15s;text-align:center}
+.admin-toggle:hover{color:rgba(255,255,255,0.7)}
+
+/* signup */
+.field{width:100%;margin-bottom:12px}
+.field-label{font-size:11px;font-weight:500;color:rgba(255,255,255,0.42);letter-spacing:.6px;text-transform:uppercase;margin-bottom:5px;display:block}
+.field-input{width:100%;padding:10px 13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:11px;font-size:13px;color:#fff;font-family:var(--font);outline:none;transition:all .15s}
+.field-input::placeholder{color:rgba(255,255,255,0.25)}
+.field-input:focus{background:rgba(255,255,255,0.13);border-color:rgba(255,255,255,0.32);box-shadow:0 0 0 3px rgba(255,255,255,0.06)}
+.pin-row{display:flex;gap:8px;width:100%;margin-bottom:4px}
+.pin-box{flex:1;min-width:0;width:0;height:48px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:11px;font-size:20px;font-weight:500;color:#fff;text-align:center;font-family:var(--font);outline:none;transition:all .15s;caret-color:transparent;padding:0}
+.pin-box:focus{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.38);box-shadow:0 0 0 3px rgba(255,255,255,0.08)}
+.pin-box.filled{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,0.3)}
+.signup-hint{font-size:11px;color:rgba(255,255,255,0.32);text-align:center;margin-bottom:1.1rem;line-height:1.55}
+.submit-btn{width:100%;padding:11px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.28);border-radius:12px;font-size:14px;font-weight:500;color:#fff;cursor:pointer;font-family:var(--font);transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.22) inset;position:relative;overflow:hidden}
+.submit-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.1) 0%,transparent 60%);pointer-events:none}
+.submit-btn:hover{background:rgba(255,255,255,0.22)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.signup-err{font-size:12px;color:#fca5a5;min-height:16px;text-align:center;margin-top:6px}
+.signup-success{display:none;flex-direction:column;align-items:center;text-align:center;padding:.5rem 0;gap:10px}
+.signup-success.show{display:flex}
+.success-icon{width:56px;height:56px;border-radius:50%;background:rgba(52,211,153,0.15);border:1.5px solid rgba(52,211,153,0.35);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 20px rgba(52,211,153,0.2)}
+.success-title{font-size:16px;font-weight:600;color:#fff}
+.success-sub{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:240px}
+
+/* spinner overlay */
+.spinner-overlay{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);backdrop-filter:blur(6px)}
+.spinner-overlay.show{display:flex}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ─── Home ─── */
+#home-screen{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;inset:0}
+.portal-shell{display:flex;flex-direction:column;height:100vh;width:100%}
+.topbar{height:52px;background:rgba(255,255,255,0.1);backdrop-filter:var(--blur-light);-webkit-backdrop-filter:var(--blur-light);border-bottom:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;flex-shrink:0;z-index:50;box-shadow:0 1px 0 rgba(255,255,255,0.12) inset}
+.topbar-logo{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px;flex:1}
+.topbar-logo span{opacity:.5;font-weight:300}
+.topbar-btn{height:30px;padding:0 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:8px;color:rgba(255,255,255,0.8);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font);white-space:nowrap}
+.topbar-btn:hover{background:rgba(255,255,255,0.2)}
+.topbar-user-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:4px 12px 4px 6px}
+.user-dot{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#2563eb);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
+.user-name{font-size:12px;color:rgba(255,255,255,0.8)}
+.portal-body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:220px;flex-shrink:0;background:rgba(255,255,255,0.07);backdrop-filter:var(--blur-light);-webkit-backdrop-filter:var(--blur-light);border-right:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;padding:1rem .75rem;gap:4px;overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.65);font-size:13px;border:1px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.1);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.22);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.2) inset}
+.nav-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.08)}
+.nav-item.active .nav-icon{background:rgba(255,255,255,0.18)}
+.nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#projects-view{flex:1;overflow-y:auto;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;align-content:start}
+.proj-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.22);border-radius:18px;padding:1.2rem 1.1rem;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.3) inset;animation:cardIn .4s cubic-bezier(.22,1,.36,1) both;position:relative;overflow:hidden}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)}
+.proj-card:hover{transform:translateY(-4px) scale(1.02);background:rgba(255,255,255,0.17);box-shadow:0 12px 32px rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.4) inset;border-color:rgba(255,255,255,0.35)}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.proj-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.proj-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;letter-spacing:-.1px}
+.proj-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.45}
+.proj-cta{font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;display:flex;align-items:center;gap:4px}
+#iframe-view{flex:1;display:none;flex-direction:column;background:#fff;position:relative}
+#iframe-view.active{display:flex}
+.iframe-bar{height:44px;flex-shrink:0;background:rgba(15,12,41,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px;padding:0 1rem}
+.iframe-back{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;padding:4px 8px;border-radius:7px;transition:all .15s;border:1px solid transparent}
+.iframe-back:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:#fff}
+.iframe-url{flex:1;font-size:12px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:4px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#portal-iframe{flex:1;border:none;width:100%}
+.iframe-notice{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;font-size:11px;color:rgba(255,255,255,0.5);pointer-events:none}
+
+/* ─── Admin ─── */
+#admin-screen{flex-direction:column;align-items:stretch;justify-content:flex-start}
+.admin-shell{display:flex;flex-direction:column;width:100%;height:100vh}
+.admin-topbar{height:52px;background:rgba(0,0,0,0.3);backdrop-filter:var(--blur-light);-webkit-backdrop-filter:var(--blur-light);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;padding:0 1.5rem;gap:1rem}
+.admin-title{font-size:15px;font-weight:600;color:#fff;flex:1;letter-spacing:-.2px}
+.admin-title span{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;background:rgba(248,113,113,0.2);color:#fca5a5;border:1px solid rgba(248,113,113,0.25);border-radius:6px;padding:2px 7px;margin-left:8px}
+.admin-body{display:flex;flex:1;overflow:hidden}
+.admin-tabs{width:200px;flex-shrink:0;background:rgba(0,0,0,0.2);border-right:1px solid rgba(255,255,255,0.08);padding:1rem .75rem;display:flex;flex-direction:column;gap:3px}
+.atab{padding:9px 12px;border-radius:10px;font-size:13px;color:rgba(255,255,255,0.55);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;border:1px solid transparent}
+.atab:hover{background:rgba(255,255,255,0.07);color:#fff}
+.atab.active{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.18);color:#fff}
+.admin-content{flex:1;overflow-y:auto;padding:1.5rem}
+.admin-section{display:none}
+.admin-section.active{display:block}
+.section-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:1.25rem;letter-spacing:-.2px}
+.a-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:1.25rem;margin-bottom:1rem}
+.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.form-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px}
+.form-label{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+.form-input{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px;font-size:13px;color:#fff;font-family:var(--font);outline:none;transition:all .15s}
+.form-input::placeholder{color:rgba(255,255,255,0.25)}
+.form-input:focus{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
+.btn{padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;display:inline-flex;align-items:center;gap:6px;border:1px solid transparent}
+.btn-primary{background:rgba(94,129,244,0.25);border-color:rgba(94,129,244,0.4);color:#a5b4fc}
+.btn-primary:hover{background:rgba(94,129,244,0.38)}
+.btn-danger{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.3);color:#fca5a5}
+.btn-danger:hover{background:rgba(248,113,113,0.25)}
+.btn-success{background:rgba(52,211,153,0.15);border-color:rgba(52,211,153,0.3);color:#6ee7b7}
+.btn-success:hover{background:rgba(52,211,153,0.25)}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px}
+.data-table{width:100%;border-collapse:separate;border-spacing:0}
+.data-table th{font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:.8px;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08)}
+.data-table td{font-size:13px;color:rgba(255,255,255,0.75);padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(255,255,255,0.04)}
+.badge{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:500;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.badge-green{background:rgba(52,211,153,0.15);color:#6ee7b7;border:1px solid rgba(52,211,153,0.2)}
+.badge-red{background:rgba(248,113,113,0.15);color:#fca5a5;border:1px solid rgba(248,113,113,0.2)}
+.badge-yellow{background:rgba(251,191,36,0.15);color:#fcd34d;border:1px solid rgba(251,191,36,0.2)}
+.badge-blue{background:rgba(94,129,244,0.15);color:#a5b4fc;border:1px solid rgba(94,129,244,0.2)}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:#f87171;display:inline-block;margin-left:4px;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(30,30,50,0.9);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:10px 20px;font-size:13px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:4px}
+@media(max-width:600px){.auth-card{width:calc(100vw - 2rem)}.sidebar{width:60px}.nav-label,.sidebar-label{display:none}#projects-view{padding:1rem;grid-template-columns:1fr 1fr;gap:10px}}
+
+/* api config banner */
+.config-banner{width:100%;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:10px 14px;font-size:12px;color:#fcd34d;margin-bottom:1.25rem;line-height:1.6;display:none}
+.config-banner.show{display:block}
+.config-banner strong{display:block;margin-bottom:2px;font-size:12px}
+
+.remembered-chip{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.16);
+  border-radius:11px;padding:10px 13px;margin-bottom:1.1rem;
+}
+.remembered-chip .ru-info{display:flex;align-items:center;gap:8px;min-width:0}
+.remembered-chip .ru-avatar{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#7c3aed,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;color:#fff;
+}
+.remembered-chip .ru-name{font-size:13px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.remembered-chip .ru-switch{
+  font-size:11px;color:rgba(255,255,255,0.45);
+  cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px;
+  transition:color .15s;
+}
+.remembered-chip .ru-switch:hover{color:rgba(255,255,255,0.8)}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+<!-- Spinner -->
+<div class="spinner-overlay" id="spinner"><div class="spinner"></div></div>
+
+<!-- ══════════ LOCK / AUTH ══════════ -->
+<div id="lock-screen" class="screen active">
+  <div class="auth-card glass-deep">
+
+    <div class="config-banner" id="config-banner">
+      <strong>⚠️ Apps Script URL not configured</strong>
+      Open this file, find <code>APPS_SCRIPT_URL</code> at the top of the &lt;script&gt; and paste your deployed Web App URL.
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+      <button class="auth-tab"        id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-panel active" id="panel-signin">
+      <div class="lock-avatar">🔐</div>
+      <p class="lock-title" id="portal-title-display">My Portal</p>
+      <p class="lock-sub" id="lock-subtitle">Sign in with your username and MPIN</p>
+      <div class="remembered-chip" id="remembered-chip" style="display:none">
+        <div class="ru-info">
+          <div class="ru-avatar" id="remembered-avatar">U</div>
+          <span class="ru-name" id="remembered-name">username</span>
+        </div>
+        <span class="ru-switch" onclick="forgetUsername()">Switch user</span>
+      </div>
+      <div class="field" id="signin-username-field" style="margin-bottom:1.1rem">
+        <label class="field-label">Username</label>
+        <input class="field-input" id="si-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="pin-dots" id="dots">
+        <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+        <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+      </div>
+      <div class="keypad">
+        <button class="key" onclick="pressKey('1')">1</button><button class="key" onclick="pressKey('2')">2</button><button class="key" onclick="pressKey('3')">3</button>
+        <button class="key" onclick="pressKey('4')">4</button><button class="key" onclick="pressKey('5')">5</button><button class="key" onclick="pressKey('6')">6</button>
+        <button class="key" onclick="pressKey('7')">7</button><button class="key" onclick="pressKey('8')">8</button><button class="key" onclick="pressKey('9')">9</button>
+        <button class="key action" onclick="clearPin()">Clear</button>
+        <button class="key" onclick="pressKey('0')">0</button>
+        <button class="key action" onclick="backspace()">
+          <svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+        </button>
+      </div>
+      <p class="lock-err" id="err-msg"></p>
+      <p class="lock-err" id="lockout-msg" style="color:#fbbf24"></p>
+      <p class="admin-toggle" id="admin-toggle" onclick="toggleAdminMode()">Sign in as admin</p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="auth-panel" id="panel-signup">
+      <div id="signup-form" style="width:100%">
+        <div style="text-align:center;margin-bottom:1.4rem">
+          <div class="lock-avatar" style="margin:0 auto .8rem">🧑</div>
+          <p class="lock-title">Create an account</p>
+          <p class="lock-sub" style="margin-bottom:0">Your request will be reviewed by admin</p>
+        </div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);margin:0 0 1.1rem"></div>
+        <div class="field">
+          <label class="field-label">Username</label>
+          <input class="field-input" id="su-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label class="field-label">Full name</label>
+          <input class="field-input" id="su-name" placeholder="" autocomplete="name">
+        </div>
+        <div class="field" style="margin-bottom:6px">
+          <label class="field-label">Choose a 4-digit MPIN</label>
+          <div class="pin-row">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="sp0" oninput="pinBoxInput('sp',0,4)" onkeydown="pinBoxKey(event,'sp',0)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="sp1" oninput="pinBoxInput('sp',1,4)" onkeydown="pinBoxKey(event,'sp',1)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="sp2" oninput="pinBoxInput('sp',2,4)" onkeydown="pinBoxKey(event,'sp',2)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="sp3" oninput="pinBoxInput('sp',3,4)" onkeydown="pinBoxKey(event,'sp',3)">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Confirm MPIN</label>
+          <div class="pin-row">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="cp0" oninput="pinBoxInput('cp',0,4)" onkeydown="pinBoxKey(event,'cp',0)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="cp1" oninput="pinBoxInput('cp',1,4)" onkeydown="pinBoxKey(event,'cp',1)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="cp2" oninput="pinBoxInput('cp',2,4)" onkeydown="pinBoxKey(event,'cp',2)">
+            <input class="pin-box" maxlength="1" type="password" inputmode="numeric" id="cp3" oninput="pinBoxInput('cp',3,4)" onkeydown="pinBoxKey(event,'cp',3)">
+          </div>
+        </div>
+        <p class="signup-hint">Your MPIN is SHA-256 hashed before being sent.<br>Admin can never see your actual PIN.</p>
+        <button class="submit-btn" onclick="submitSignup()">Request Access →</button>
+        <p class="signup-err" id="signup-err"></p>
+      </div>
+      <div class="signup-success" id="signup-success">
+        <div class="success-icon">✅</div>
+        <p class="success-title">Request sent!</p>
+        <p class="success-sub">The admin will review and approve your access. Sign in once approved.</p>
+        <button class="submit-btn" style="margin-top:.5rem;max-width:200px" onclick="switchAuthTab('signin')">Back to Sign In</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="home-screen" class="screen">
+  <div class="portal-shell">
+    <div class="topbar">
+      <div class="topbar-logo" id="topbar-logo">My Portal <span>/ Projects</span></div>
+      <div class="topbar-user-chip">
+        <div class="user-dot" id="topbar-initials">U</div>
+        <span class="user-name" id="topbar-name">User</span>
+      </div>
+      <button class="topbar-btn" onclick="logout()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Lock
+      </button>
+    </div>
+    <div class="portal-body">
+      <div class="sidebar">
+        <div class="sidebar-label">Projects</div>
+        <div class="nav-item active" onclick="showProjects()">
+          <div class="nav-icon">🗂️</div><span class="nav-label">All Projects</span>
+        </div>
+        <div id="sidebar-projects"></div>
+      </div>
+      <div class="main-area">
+        <div id="projects-view"></div>
+        <div id="iframe-view">
+          <div class="iframe-bar">
+            <div class="iframe-back" onclick="showProjects()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Back
+            </div>
+            <div class="iframe-url" id="iframe-url-bar"></div>
+            <button class="topbar-btn" onclick="openExternal()">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
+            </button>
+          </div>
+          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          <div class="iframe-notice">Press Back to return to portal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN ══════════ -->
+<div id="admin-screen" class="screen">
+  <div class="admin-shell">
+    <div class="admin-topbar">
+      <div class="admin-title">My Portal <span>Admin</span></div>
+      <button class="btn btn-danger btn-sm" onclick="logout()">Exit Admin</button>
+    </div>
+    <div class="admin-body">
+      <div class="admin-tabs">
+        <div class="atab active" onclick="showAdminTab('users')" id="tab-users">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users
+        </div>
+        <div class="atab" onclick="showAdminTab('requests')" id="tab-requests">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Requests <span id="req-badge" style="display:none" class="notif-dot"></span>
+        </div>
+        <div class="atab" onclick="showAdminTab('projects')" id="tab-projects">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Projects
+        </div>
+        <div class="atab" onclick="showAdminTab('settings')" id="tab-settings">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+        </div>
+      </div>
+      <div class="admin-content">
+        <!-- USERS -->
+        <div class="admin-section active" id="admin-users">
+          <div class="section-title">User Accounts</div>
+          <div class="a-card">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Username</label><input class="form-input" id="new-user-username" placeholder=""></div>
+              <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="new-user-name" placeholder=""></div>
+              <div class="form-group"><label class="form-label">4-digit MPIN</label><input class="form-input" id="new-user-pin" placeholder="Visible only now" maxlength="4" type="password"></div>
+            </div>
+            <button class="btn btn-primary" onclick="addUser()">+ Add User</button>
+          </div>
+          <div class="a-card" style="padding:.5rem 0">
+            <table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Status</th><th>Source</th><th>Created</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table>
+          </div>
+        </div>
+        <!-- REQUESTS -->
+        <div class="admin-section" id="admin-requests">
+          <div class="section-title">Access Requests</div>
+          <div class="a-card" style="padding:.5rem 0">
+            <table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Status</th><th>Requested</th><th>Actions</th></tr></thead><tbody id="requests-tbody"></tbody></table>
+          </div>
+        </div>
+        <!-- PROJECTS -->
+        <div class="admin-section" id="admin-projects">
+          <div class="section-title">Manage Projects</div>
+          <div class="a-card">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="np-name" placeholder="e.g. My App"></div>
+              <div class="form-group"><label class="form-label">URL</label><input class="form-input" id="np-url" placeholder="https://yourusername.github.io/repo"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="np-desc" placeholder="Short description"></div>
+              <div class="form-group" style="max-width:80px"><label class="form-label">Icon</label><input class="form-input" id="np-icon" placeholder="🚀" maxlength="2"></div>
+            </div>
+            <button class="btn btn-primary" onclick="addProject()">+ Add Project</button>
+          </div>
+          <div class="a-card" style="padding:.5rem 0">
+            <table class="data-table"><thead><tr><th>Icon</th><th>Name</th><th>URL</th><th>Actions</th></tr></thead><tbody id="projects-tbody"></tbody></table>
+          </div>
+        </div>
+        <!-- SETTINGS -->
+        <div class="admin-section" id="admin-settings">
+          <div class="section-title">Settings</div>
+          <div class="a-card">
+            <div class="form-group" style="max-width:260px;margin-bottom:1rem"><label class="form-label">Portal Name</label><input class="form-input" id="portal-name-input" placeholder="My Portal"></div>
+            <div class="form-group" style="max-width:260px;margin-bottom:1rem"><label class="form-label">New Admin PIN (6-digit)</label><input class="form-input" id="new-admin-pin" placeholder="New PIN" maxlength="6" type="password"></div>
+            <div class="form-group" style="max-width:260px;margin-bottom:1.25rem"><label class="form-label">Confirm New Admin PIN</label><input class="form-input" id="confirm-admin-pin" placeholder="Confirm PIN" maxlength="6" type="password"></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+          </div>
+          <div class="a-card">
+            <div style="font-size:12px;color:rgba(255,255,255,0.38);line-height:1.8">
+              <strong style="color:rgba(255,255,255,0.55);display:block;margin-bottom:6px">How data is stored</strong>
+              All users, requests, and projects are stored in your Google Sheet.<br>
+              MPINs are <strong style="color:rgba(255,255,255,0.55)">SHA-256 hashed</strong> in the browser before being sent — the raw PIN is never transmitted or stored.<br>
+              Default Admin PIN: <code style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;font-family:monospace">123456</code> — change it after first login.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  ▼▼▼  PASTE YOUR APPS SCRIPT WEB APP URL HERE  ▼▼▼
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsa3h8UPA2in2haF-FdCAxai8CJ9tSyEs45d1xKRSyjg06KVJ_A6Zyulxo65bM3Oul/exec";
+// ▲▲▲  e.g. "https://script.google.com/macros/s/ABC.../exec"
+// ══════════════════════════════════════════════════
+
+const BG_COLORS = ["#1e3a8a","#064e3b","#78350f","#4c1d95","#134e4a","#7f1d1d","#1e1b4b","#042f2e","#172554","#3b0764"];
+
+let adminMode   = false;
+let currentUser = null;
+let currentPin  = "";
+let pinLength   = 4;
+let cachedSettings = { portalName: "My Portal" };
+let lockoutInterval = null;
+
+// ─── SHA-256 ─────────────────────────────────────
+async function sha256(str) {
+  const buf  = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+// ─── API call ────────────────────────────────────
+async function apiRaw(action, data = {}) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
+    document.getElementById("config-banner").classList.add("show");
+    return { ok: false, error: "Apps Script URL not configured." };
+  }
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method:  "POST",
+    headers: { "Content-Type": "text/plain" }, // avoid preflight CORS
+    body:    JSON.stringify({ action, data }),
+  });
+  return await res.json();
+}
+
+async function api(action, data = {}) {
+  const json = await apiRaw(action, data);
+  if (!json.ok) throw new Error(json.error || "Unknown error");
+  return json;
+}
+
+function spin(on) { document.getElementById("spinner").classList.toggle("show", on); }
+
+// ─── Auth tab switch ──────────────────────────────
+function switchAuthTab(tab) {
+  ["signin","signup"].forEach(t => {
+    document.getElementById("tab-"    + t).classList.toggle("active", t === tab);
+    document.getElementById("panel-" + t).classList.toggle("active", t === tab);
+  });
+  if (tab === "signin") { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; if(adminMode) { adminMode=false; resetAdminUI(); } }
+  if (tab === "signup") resetSignupForm();
+}
+
+// ─── Keypad ───────────────────────────────────────
+function toggleAdminMode() {
+  adminMode = !adminMode;
+  currentPin = ""; document.getElementById("err-msg").textContent = "";
+  document.getElementById("lockout-msg").textContent = "";
+  if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = ""); }
+  if (adminMode) {
+    pinLength = 6;
+    document.getElementById("dots").innerHTML = Array.from({length:6},(_,i)=>`<div class="dot" id="d${i}"></div>`).join("");
+    document.getElementById("lock-subtitle").textContent = "Enter 6-digit Admin PIN";
+    document.getElementById("admin-toggle").textContent  = "← Back to user login";
+    document.getElementById("signin-username-field").style.display = "none";
+    document.getElementById("remembered-chip").style.display = "none";
+  } else { resetAdminUI(); }
+  updateDots();
+}
+function resetAdminUI() {
+  adminMode = false; pinLength = 4;
+  document.getElementById("dots").innerHTML = Array.from({length:4},(_,i)=>`<div class="dot" id="d${i}"></div>`).join("");
+  document.getElementById("admin-toggle").textContent  = "Sign in as admin";
+  applyRememberedUsername();
+}
+
+function pressKey(k) {
+  if (currentPin.length >= pinLength) return;
+  currentPin += k; updateDots();
+  if (currentPin.length === pinLength) setTimeout(checkPin, 130);
+}
+function updateDots(state) {
+  for (let i = 0; i < pinLength; i++) {
+    const d = document.getElementById("d" + i); if (!d) continue;
+    d.className = "dot" + (i < currentPin.length ? " " + (state || "filled") : "");
+  }
+}
+function clearPin()  { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; }
+function backspace() { currentPin = currentPin.slice(0, -1); updateDots(); }
+
+async function checkPin() {
+  spin(true);
+  try {
+    const hash = await sha256(currentPin);
+    if (adminMode) {
+      const res = await apiRaw("loginAdmin", { pinHash: hash });
+      if (!res.ok) { spin(false); handleAuthError(res); return; }
+      updateDots("success");
+      setTimeout(async () => { showScreen("admin-screen"); await renderAdmin(); spin(false); }, 300);
+    } else {
+      const username = document.getElementById("si-username").value.trim();
+      if (!username) { spin(false); badPin("Please enter your username"); return; }
+      const res = await apiRaw("loginUser", { username, pinHash: hash });
+      if (!res.ok) { spin(false); handleAuthError(res); return; }
+      updateDots("success");
+      currentUser = res.user;
+      localStorage.setItem(REMEMBER_KEY, res.user.username || username);
+      setTimeout(async () => { showScreen("home-screen"); await renderHome(); spin(false); }, 300);
+    }
+  } catch (err) {
+    spin(false);
+    badPin("Error: " + err.message);
+  }
+}
+
+function handleAuthError(res) {
+  const err = res.error;
+  if (err === "locked") {
+    startLockoutCountdown(res.retryAfter || 60);
+    return;
+  }
+  const msgs = {
+    no_account: "No account found — please sign up",
+    pending:    "Access pending admin approval",
+    denied:     "Access denied by admin",
+    wrong_pin:  adminMode ? "Wrong admin PIN" : "Incorrect MPIN",
+  };
+  let msg = msgs[err] || ("Error: " + err);
+  if (err === "wrong_pin" && res.attemptsLeft !== undefined) {
+    msg += ` — ${res.attemptsLeft} attempt${res.attemptsLeft===1?"":"s"} left`;
+  }
+  badPin(msg);
+}
+
+function startLockoutCountdown(seconds) {
+  currentPin = ""; updateDots();
+  document.getElementById("err-msg").textContent = "";
+  const lockEl = document.getElementById("lockout-msg");
+  document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "none");
+  let remaining = Math.ceil(seconds);
+  const tick = () => {
+    lockEl.textContent = `Too many attempts. Try again in ${remaining}s`;
+    if (remaining <= 0) {
+      clearInterval(lockoutInterval);
+      lockoutInterval = null;
+      lockEl.textContent = "";
+      document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
+      return;
+    }
+    remaining--;
+  };
+  if (lockoutInterval) clearInterval(lockoutInterval);
+  tick();
+  lockoutInterval = setInterval(tick, 1000);
+}
+
+function badPin(msg) {
+  updateDots("error");
+  document.getElementById("err-msg").textContent = msg;
+  setTimeout(() => { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; }, 1100);
+}
+
+// ─── PIN boxes (signup) ───────────────────────────
+function pinBoxInput(prefix, i, max) {
+  const el = document.getElementById(prefix + i);
+  const v  = el.value.replace(/\D/g, "");
+  el.value = v; el.classList.toggle("filled", v !== "");
+  if (v && i < max - 1) document.getElementById(prefix + (i + 1)).focus();
+}
+function pinBoxKey(e, prefix, i) {
+  if (e.key === "Backspace" && !document.getElementById(prefix + i).value && i > 0)
+    document.getElementById(prefix + (i - 1)).focus();
+}
+function getPinBoxValue(prefix, len) {
+  return Array.from({length:len}, (_,i) => document.getElementById(prefix+i).value).join("");
+}
+
+async function submitSignup() {
+  const username = document.getElementById("su-username").value.trim();
+  const name = document.getElementById("su-name").value.trim();
+  const pin  = getPinBoxValue("sp", 4);
+  const conf = getPinBoxValue("cp", 4);
+  const errEl = document.getElementById("signup-err");
+  errEl.textContent = "";
+
+  if (!username)            { errEl.textContent = "Please choose a username."; return; }
+  if (!/^[a-zA-Z0-9_.]{3,20}$/.test(username)) { errEl.textContent = "Username: 3-20 chars, letters/numbers/_/. only."; return; }
+  if (!name)                { errEl.textContent = "Please enter your full name."; return; }
+  if (pin.length !== 4)     { errEl.textContent = "Please enter a complete 4-digit MPIN."; return; }
+  if (pin !== conf)          { errEl.textContent = "PINs do not match."; return; }
+
+  spin(true);
+  try {
+    const pinHash = await sha256(pin);
+    await api("signupRequest", { username, name, pinHash });
+    spin(false);
+    document.getElementById("signup-form").style.display = "none";
+    document.getElementById("signup-success").classList.add("show");
+  } catch (err) {
+    spin(false);
+    const msgs = { username_taken:"This username is already taken. Choose another.", missing_username:"Please choose a username." };
+    errEl.textContent = msgs[err.message] || "Error: " + err.message;
+  }
+}
+
+function resetSignupForm() {
+  document.getElementById("su-username").value = "";
+  document.getElementById("su-name").value = "";
+  ["sp","cp"].forEach(p => Array.from({length:4},(_,i) => {
+    const el = document.getElementById(p+i); if(el){el.value="";el.classList.remove("filled");}
+  }));
+  document.getElementById("signup-err").textContent = "";
+  document.getElementById("signup-form").style.display = "block";
+  document.getElementById("signup-success").classList.remove("show");
+}
+
+// ─── Screens ──────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function logout() {
+  currentPin = ""; currentUser = null;
+  if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; }
+  document.getElementById("lockout-msg").textContent = "";
+  document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
+  document.getElementById("si-username").value = "";
+  resetAdminUI(); updateDots();
+  document.getElementById("portal-iframe").src = "about:blank";
+  switchAuthTab("signin");
+  showScreen("lock-screen");
+}
+
+// ─── Home ─────────────────────────────────────────
+async function renderHome() {
+  try {
+    const [projRes, settingsRes] = await Promise.all([api("getProjects"), api("getSettings")]);
+    const projects = projRes.projects;
+    const settings = settingsRes;
+    const name = currentUser ? currentUser.name : "User";
+    document.getElementById("topbar-name").textContent     = name;
+    document.getElementById("topbar-initials").textContent = name.slice(0,1).toUpperCase();
+    document.getElementById("topbar-logo").innerHTML       = `${settings.portalName||"My Portal"} <span>/ Projects</span>`;
+
+    document.getElementById("sidebar-projects").innerHTML = projects.map(p => `
+      <div class="nav-item" onclick="openProject('${p.id}','${encodeURIComponent(p.url)}')">
+        <div class="nav-icon">${p.icon}</div>
+        <span class="nav-label">${p.name}</span>
+      </div>`).join("");
+
+    const grid = document.getElementById("projects-view");
+    if (!projects.length) {
+      grid.innerHTML = `<div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;padding-top:2rem;text-align:center">No projects yet. Ask your admin to add some.</div>`;
+    } else {
+      grid.innerHTML = projects.map((p,i) => `
+        <div class="proj-card" onclick="openProject('${p.id}','${encodeURIComponent(p.url)}')" style="animation-delay:${i*.05}s">
+          <div class="proj-icon" style="background:${p.bg||'rgba(255,255,255,0.1)'}">${p.icon}</div>
+          <div class="proj-name">${p.name}</div>
+          <div class="proj-desc">${p.desc||''}</div>
+          <div class="proj-cta">
+            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>Open project
+          </div>
+        </div>`).join("");
+    }
+    showProjects();
+  } catch(e) { showToast("Failed to load projects: " + e.message); }
+}
+
+function showProjects() {
+  document.getElementById("projects-view").style.display = "grid";
+  document.getElementById("iframe-view").classList.remove("active");
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.querySelector(".sidebar .nav-item:first-of-type").classList.add("active");
+}
+
+let currentExtUrl = "";
+function openProject(id, encodedUrl) {
+  const url = decodeURIComponent(encodedUrl);
+  currentExtUrl = url;
+  document.getElementById("iframe-url-bar").textContent = url;
+  document.getElementById("portal-iframe").src = url;
+  document.getElementById("projects-view").style.display = "none";
+  document.getElementById("iframe-view").classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+}
+function openExternal() { window.open(currentExtUrl, "_blank"); }
+
+// ─── Admin ────────────────────────────────────────
+async function renderAdmin() {
+  try {
+    const [uRes, rRes, pRes, sRes] = await Promise.all([
+      api("getUsers"), api("getRequests"), api("getProjects"), api("getSettings")
+    ]);
+    renderUsersTable(uRes.users);
+    renderRequestsTable(rRes.requests);
+    renderProjectsTable(pRes.projects);
+    document.getElementById("portal-name-input").value = sRes.portalName || "";
+    const pending = rRes.requests.filter(r => r.status === "pending").length;
+    document.getElementById("req-badge").style.display = pending ? "inline-block" : "none";
+  } catch(e) { showToast("Admin load error: " + e.message); }
+}
+
+function showAdminTab(tab) {
+  document.querySelectorAll(".atab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+  document.getElementById("admin-" + tab).classList.add("active");
+  // refresh on tab click
+  if (tab === "users")    api("getUsers").then(r=>renderUsersTable(r.users)).catch(()=>{});
+  if (tab === "requests") api("getRequests").then(r=>renderRequestsTable(r.requests)).catch(()=>{});
+  if (tab === "projects") api("getProjects").then(r=>renderProjectsTable(r.projects)).catch(()=>{});
+}
+
+function fmtDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+}
+
+function renderUsersTable(users) {
+  const tbody = document.getElementById("users-tbody");
+  if (!users || !users.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No users yet</td></tr>`; return; }
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.65)">${u.username||'—'}</td>
+      <td style="font-weight:500;color:#fff">${u.name}</td>
+      <td>
+        <span class="badge ${u.status==='approved'?'badge-green':u.status==='pending'?'badge-yellow':'badge-red'}">${u.status}</span>
+        ${u.locked?'<span class="badge badge-red" style="margin-left:4px">🔒 locked</span>':''}
+      </td>
+      <td><span class="badge badge-blue">${u.source||'admin'}</span></td>
+      <td style="color:rgba(255,255,255,0.4);font-size:12px">${fmtDate(u.created_at)}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        ${u.status==='approved'
+          ?`<button class="btn btn-danger btn-sm" onclick="setUserStatus('${u.id}','blocked')">Block</button>`
+          :`<button class="btn btn-success btn-sm" onclick="setUserStatus('${u.id}','approved')">Approve</button>`}
+        ${u.locked?`<button class="btn btn-success btn-sm" onclick="unlockUser('${u.id}')">Unlock</button>`:''}
+        <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45)" onclick="deleteUser('${u.id}')">Remove</button>
+      </td>
+    </tr>`).join("");
+}
+
+async function unlockUser(id) {
+  spin(true);
+  try { await api("unlockUser",{id}); const r=await api("getUsers"); renderUsersTable(r.users); showToast("Unlocked ✓"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+async function addUser() {
+  const username = document.getElementById("new-user-username").value.trim();
+  const name = document.getElementById("new-user-name").value.trim();
+  const pin  = document.getElementById("new-user-pin").value.trim();
+  if (!username || !/^[a-zA-Z0-9_.]{3,20}$/.test(username)) { showToast("Username: 3-20 chars, letters/numbers/_/. only"); return; }
+  if (!name || pin.length !== 4 || !/^\d+$/.test(pin)) { showToast("Name + 4-digit PIN required"); return; }
+  spin(true);
+  try {
+    const pinHash = await sha256(pin);
+    await api("addUser", { username, name, pinHash });
+    document.getElementById("new-user-username").value = "";
+    document.getElementById("new-user-name").value = "";
+    document.getElementById("new-user-pin").value  = "";
+    const r = await api("getUsers"); renderUsersTable(r.users);
+    showToast("User added ✓");
+  } catch(e) { showToast(e.message === "username_taken" ? "Username already taken" : "Error: " + e.message); }
+  spin(false);
+}
+
+async function setUserStatus(id, status) {
+  spin(true);
+  try { await api("setUserStatus",{id,status}); const r=await api("getUsers"); renderUsersTable(r.users); showToast("Updated ✓"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+async function deleteUser(id) {
+  spin(true);
+  try { await api("deleteUser",{id}); const r=await api("getUsers"); renderUsersTable(r.users); showToast("Removed"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+function renderRequestsTable(requests) {
+  const tbody = document.getElementById("requests-tbody");
+  const pending = (requests||[]).filter(r => r.status === "pending").length;
+  document.getElementById("req-badge").style.display = pending ? "inline-block" : "none";
+  if (!requests || !requests.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No requests yet</td></tr>`; return; }
+  tbody.innerHTML = requests.map(r => `
+    <tr>
+      <td style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.65)">${r.username||'—'}</td>
+      <td style="font-weight:500;color:#fff">${r.name}</td>
+      <td><span class="badge ${r.status==='pending'?'badge-yellow':r.status==='approved'?'badge-green':'badge-red'}">${r.status}</span></td>
+      <td style="color:rgba(255,255,255,0.4);font-size:12px">${fmtDate(r.created_at)}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        ${r.status==='pending'
+          ?`<button class="btn btn-success btn-sm" onclick="approveRequest('${r.id}')">Approve</button>
+             <button class="btn btn-danger btn-sm"  onclick="denyRequest('${r.id}')">Deny</button>`
+          :`<button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45)" onclick="deleteRequest('${r.id}')">Remove</button>`}
+      </td>
+    </tr>`).join("");
+}
+
+async function approveRequest(id) {
+  spin(true);
+  try { await api("approveRequest",{id}); const [u,r]=await Promise.all([api("getUsers"),api("getRequests")]); renderUsersTable(u.users); renderRequestsTable(r.requests); showToast("Approved ✓"); }
+  catch(e){ showToast(e.message==="username_taken" ? "Username already taken by another user" : "Error: "+e.message); } spin(false);
+}
+async function denyRequest(id) {
+  spin(true);
+  try { await api("denyRequest",{id}); const r=await api("getRequests"); renderRequestsTable(r.requests); showToast("Denied"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+async function deleteRequest(id) {
+  spin(true);
+  try { await api("deleteRequest",{id}); const r=await api("getRequests"); renderRequestsTable(r.requests); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+function renderProjectsTable(projects) {
+  const tbody = document.getElementById("projects-tbody");
+  if (!projects||!projects.length) { tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No projects yet</td></tr>`; return; }
+  tbody.innerHTML = projects.map(p=>`
+    <tr>
+      <td style="font-size:20px">${p.icon}</td>
+      <td style="font-weight:500">${p.name}</td>
+      <td style="color:rgba(255,255,255,0.4);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.url}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteProject('${p.id}')">Remove</button></td>
+    </tr>`).join("");
+}
+
+async function addProject() {
+  const name=document.getElementById("np-name").value.trim();
+  const url=document.getElementById("np-url").value.trim();
+  const desc=document.getElementById("np-desc").value.trim();
+  const icon=document.getElementById("np-icon").value.trim()||"📁";
+  if(!name||!url){ showToast("Name and URL required"); return; }
+  spin(true);
+  try {
+    await api("addProject",{name,url,desc:desc||"No description",icon,bg:BG_COLORS[Math.floor(Math.random()*BG_COLORS.length)]});
+    ["np-name","np-url","np-desc","np-icon"].forEach(id=>document.getElementById(id).value="");
+    const r=await api("getProjects"); renderProjectsTable(r.projects); showToast("Project added ✓");
+  } catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+async function deleteProject(id) {
+  spin(true);
+  try{ await api("deleteProject",{id}); const r=await api("getProjects"); renderProjectsTable(r.projects); showToast("Removed"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+async function saveSettings() {
+  const name=document.getElementById("portal-name-input").value.trim();
+  const np=document.getElementById("new-admin-pin").value.trim();
+  const cp=document.getElementById("confirm-admin-pin").value.trim();
+  const updates={};
+  if(name) updates.portalName=name;
+  if(np||cp){
+    if(np.length!==6||!/^\d+$/.test(np)){ showToast("Admin PIN must be 6 digits"); return; }
+    if(np!==cp){ showToast("PINs do not match"); return; }
+    updates.adminPinHash = await sha256(np);
+    document.getElementById("new-admin-pin").value="";
+    document.getElementById("confirm-admin-pin").value="";
+  }
+  if(!Object.keys(updates).length){ showToast("Nothing to save"); return; }
+  spin(true);
+  try{ await api("saveSettings",updates); showToast("Settings saved ✓"); }
+  catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+// ─── Toast ───────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove("show"),2400);
+}
+
+// ─── Remember username ─────────────────────────────
+const REMEMBER_KEY = "portal_remembered_username";
+
+function applyRememberedUsername() {
+  const saved = localStorage.getItem(REMEMBER_KEY);
+  const chip  = document.getElementById("remembered-chip");
+  const field = document.getElementById("signin-username-field");
+  if (saved && !adminMode) {
+    document.getElementById("remembered-name").textContent = saved;
+    document.getElementById("remembered-avatar").textContent = saved.slice(0,1).toUpperCase();
+    chip.style.display = "flex";
+    field.style.display = "none";
+    document.getElementById("si-username").value = saved;
+    document.getElementById("lock-subtitle").textContent = "Enter your 4-digit MPIN";
+  } else {
+    chip.style.display = "none";
+    field.style.display = "block";
+  }
+}
+
+function forgetUsername() {
+  localStorage.removeItem(REMEMBER_KEY);
+  document.getElementById("si-username").value = "";
+  applyRememberedUsername();
+  document.getElementById("lock-subtitle").textContent = "Sign in with your username and MPIN";
+  setTimeout(() => document.getElementById("si-username").focus(), 50);
+}
+
+// ─── Init: check URL config ───────────────────────
+window.addEventListener("load", () => {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
+    document.getElementById("config-banner").classList.add("show");
+  }
+  applyRememberedUsername();
+});
+</script>
+</body>
+</html>
