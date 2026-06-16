@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<script>
+  // Set <base> dynamically so all relative URLs work under any GitHub Pages subpath
+  (function() {
+    var base = document.createElement("base");
+    var path = location.pathname;
+    base.href = path.endsWith("/") ? path : path.substring(0, path.lastIndexOf("/") + 1);
+    document.write('<base href="' + base.href + '">');
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -383,16 +392,17 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0f0c29 0%,#302b6
     width: calc(100vw - 1.5rem);
     flex-direction: column;
     border-radius: 20px;
-    max-height: calc(100vh - 2rem);
+    max-height: calc(100svh - 2rem);
     overflow-y: auto;
   }
   /* Hide left branding panel on mobile */
   .auth-left { display: none !important; }
-  .auth-right { padding: 1.75rem 1.25rem 1.5rem; width: 100%; }
+  .auth-right { padding: 1.75rem 1.25rem 1.5rem; width: 100% !important; flex: 1; }
 
   #lock-screen {
     align-items: center;
     padding: calc(env(safe-area-inset-top) + 0.5rem) 0 calc(env(safe-area-inset-bottom) + 0.5rem);
+    overflow-y: auto;
   }
 
   /* Keypad bigger tap targets on mobile */
@@ -461,6 +471,34 @@ input[type="email"] {
   .topbar, .admin-topbar {
     padding-top: env(safe-area-inset-top);
     height: calc(52px + env(safe-area-inset-top));
+  }
+}
+
+
+/* ── Installed PWA (standalone mode) — always use mobile layout ── */
+@media (display-mode: standalone) {
+  .auth-card {
+    width: calc(100vw - 1.5rem) !important;
+    flex-direction: column !important;
+    border-radius: 20px !important;
+    max-height: calc(100svh - 2rem) !important;
+    overflow-y: auto !important;
+  }
+  .auth-left { display: none !important; }
+  .auth-right { padding: 1.75rem 1.25rem 1.5rem !important; width: 100% !important; }
+  .sidebar { display: none !important; }
+  .bottom-nav { display: flex !important; }
+  #projects-view {
+    padding: 1rem 0.875rem 80px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Status bar space on iOS */
+  #lock-screen {
+    padding-top: calc(env(safe-area-inset-top) + 1rem) !important;
+  }
+  .topbar, .admin-topbar {
+    padding-top: env(safe-area-inset-top) !important;
+    height: calc(52px + env(safe-area-inset-top)) !important;
   }
 }
 
@@ -1300,14 +1338,11 @@ const INSTALL_DISMISSED_KEY = "portal_install_dismissed";
 
 // Register service worker
 if ("serviceWorker" in navigator) {
-  // Derive base path so it works on GitHub Pages subfolder or root
-  const swBase = location.pathname.endsWith("/")
-    ? location.pathname
-    : location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register(swBase + "sw.js", { scope: swBase })
-      .then(reg => console.log("SW registered, scope:", reg.scope))
-      .catch(err => console.warn("SW registration failed:", err));
+    // Use a relative path — browser resolves it relative to current page
+    navigator.serviceWorker.register("./sw.js")
+      .then(reg => console.log("SW registered:", reg.scope))
+      .catch(err => console.warn("SW failed:", err));
   });
 }
 
