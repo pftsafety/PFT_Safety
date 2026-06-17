@@ -550,6 +550,7 @@ input[type="email"] {
   flex: 1; display: none; flex-direction: column;
   background: linear-gradient(135deg, #0d1117 0%, #1a2744 60%, #1c2333 100%);
   overflow: hidden; position: relative;
+  height: 100%;
 }
 #safety-view.active { display: flex; }
 
@@ -582,7 +583,8 @@ input[type="email"] {
   flex: 1; overflow-y: auto;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 2rem 1.5rem; gap: 1.5rem;
+  padding: clamp(1rem, 4vh, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+  gap: clamp(1rem, 2.5vh, 1.75rem);
   position: relative;
 }
 
@@ -613,7 +615,7 @@ input[type="email"] {
   border: 1px solid rgba(255,255,255,0.15);
   border-radius: 24px;
   padding: 2rem 2.5rem;
-  text-align: center; z-index: 1; width: 100%; max-width: 500px;
+  text-align: center; z-index: 1; width: 100%; max-width: 680px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.2) inset;
   position: relative; overflow: hidden;
 }
@@ -628,11 +630,13 @@ input[type="email"] {
   letter-spacing: 2px; font-weight: 700; margin-bottom: 0.75rem;
 }
 .sv-counter-number {
-  font-size: clamp(2.5rem, 10vw, 6rem);
-  font-weight: 800; color: #fff; line-height: 1;
-  letter-spacing: -2px;
+  font-size: clamp(2rem, 7vw, 5rem);
+  font-weight: 800; color: #fff; line-height: 1.1;
+  letter-spacing: -1px;
   text-shadow: 0 4px 32px rgba(59,130,246,0.5);
   font-variant-numeric: tabular-nums;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 .sv-counter-unit {
   font-size: clamp(0.7rem, 1.8vw, 0.9rem);
@@ -643,7 +647,7 @@ input[type="email"] {
 /* Bottom stats row */
 .sv-stats {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; width: 100%; max-width: 500px; z-index: 1;
+  gap: 10px; width: 100%; max-width: 680px; z-index: 1;
 }
 .sv-stat-box {
   background: rgba(255,255,255,0.07);
@@ -1702,7 +1706,7 @@ function startCardLiveCounter() {
     const mhEl   = document.getElementById("sc-manhours");
     const daysEl = document.getElementById("sc-days");
     if (!mhEl) { clearInterval(cardLiveTimer); return; }
-    if (daysEl) daysEl.textContent = days.toLocaleString('en-IN');
+    if (daysEl) daysEl.textContent = days.toLocaleString('en-US');
     if (!animated) {
       animated = true;
       // Animate from 0 on first render
@@ -1711,7 +1715,7 @@ function startCardLiveCounter() {
         0, mh, 1200
       );
     } else {
-      mhEl.innerHTML = mh.toLocaleString('en-IN') + "<sup>hrs</sup>";
+      mhEl.innerHTML = mh.toLocaleString('en-US') + "<sup>hrs</sup>";
     }
   }
 
@@ -1744,8 +1748,8 @@ function updateSafetyView() {
   const diffMs  = Date.now() - ACCIDENT_DATE;
   const days    = Math.floor(diffMs / 86400000);
   const mh      = Math.floor((diffMs / 3600000) * (SAFETY_WORKERS * SAFETY_SHIFT / 24));
-  const mhFmt   = mh.toLocaleString('en-IN');
-  const daysFmt = days.toLocaleString('en-IN');
+  const mhFmt   = mh.toLocaleString('en-US');
+  const daysFmt = days.toLocaleString('en-US');
   const dateEl  = document.getElementById("sv-incident-date");
   const daysEl  = document.getElementById("sv-days");
   const mhEl    = document.getElementById("sv-manhours");
@@ -1771,9 +1775,9 @@ function animateSafetyCounter(el, from, to, dur) {
     if (!start) start = ts;
     const p = Math.min((ts - start) / dur, 1);
     const ease = 1 - Math.pow(1 - p, 4);
-    el.textContent = Math.floor(ease * (to - from) + from).toLocaleString('en-IN');
+    el.textContent = Math.floor(ease * (to - from) + from).toLocaleString('en-US');
     if (p < 1) requestAnimationFrame(step);
-    else el.textContent = to.toLocaleString('en-IN');
+    else el.textContent = to.toLocaleString('en-US');
   };
   requestAnimationFrame(step);
 }
