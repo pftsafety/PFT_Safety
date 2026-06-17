@@ -834,7 +834,7 @@ input[type="email"] {
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
             </button>
           </div>
-          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
           <div class="iframe-notice">Press Back to return to portal</div>
         </div>
 
@@ -1536,7 +1536,7 @@ const INSTALL_DISMISSED_KEY = "portal_install_dismissed";
 // Register service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js")
+    navigator.serviceWorker.register("./sw.js?v=5")
       .then(reg => {
         console.log("SW registered:", reg.scope);
         // When a new SW takes over, reload the page to get fresh files
