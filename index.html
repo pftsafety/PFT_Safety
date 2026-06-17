@@ -1532,10 +1532,24 @@ const INSTALL_DISMISSED_KEY = "portal_install_dismissed";
 // Register service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    // Use a relative path — browser resolves it relative to current page
     navigator.serviceWorker.register("./sw.js")
-      .then(reg => console.log("SW registered:", reg.scope))
+      .then(reg => {
+        console.log("SW registered:", reg.scope);
+        // When a new SW takes over, reload the page to get fresh files
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "activated" && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        });
+      })
       .catch(err => console.warn("SW failed:", err));
+    // If SW controller changes (new SW took over), reload
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      window.location.reload();
+    });
   });
 }
 
@@ -1626,10 +1640,6 @@ function showiOSInstallTip() {
     }, 3000);
   }
 })();
-
-
-// Patch showProjects / openProject for mobile bottom nav
-
 
 
 
