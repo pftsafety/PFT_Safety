@@ -1,79 +1,64 @@
-// Portal PWA Service Worker
-// Automatically handles GitHub Pages subpath (e.g. /repo-name/)
+// Portal PWA Service Worker v5
+const CACHE = "portal-v5";
 
-const CACHE_NAME = "portal-cache-v4";
-
-// Detect base path at install time from SW's own URL
-const SW_URL   = self.location.href;
-const BASE_PATH = SW_URL.substring(0, SW_URL.lastIndexOf("/") + 1);
-
-self.addEventListener("install", event => {
+self.addEventListener("install", e => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      // Cache using the full URL derived from SW location
-      const urls = [
-        BASE_PATH,
-        BASE_PATH + "index.html",
-        BASE_PATH + "manifest.json",
-        BASE_PATH + "icon-192.png",
-        BASE_PATH + "icon-512.png",
-      ];
-      return Promise.allSettled(
-        urls.map(url =>
-          fetch(url).then(res => {
-            if (res.ok) cache.put(url, res);
-          }).catch(() => {})
-        )
-      );
-    })
+  // Don't pre-cache anything — avoid fetch errors during install
+});
+
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE).map(k => {
+          console.log("SW: deleting old cache", k);
+          return caches.delete(k);
+        })
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener("fetch", event => {
-  const req = event.request;
+self.addEventListener("fetch", e => {
+  const req = e.request;
   const url = new URL(req.url);
 
-  // Skip non-GET and cross-origin API calls
+  // Only handle GET requests
   if (req.method !== "GET") return;
+
+  // Never intercept Apps Script API calls
   if (url.hostname.includes("script.google.com")) return;
 
-  // Google Fonts — cache first
-  if (url.hostname.includes("fonts.googleapis.com") || url.hostname.includes("fonts.gstatic.com")) {
-    event.respondWith(
-      caches.match(req).then(cached => cached || fetch(req).then(res => {
-        caches.open(CACHE_NAME).then(c => c.put(req, res.clone()));
-        return res;
-      }))
+  // Never intercept chrome-extension or non-http requests
+  if (!url.protocol.startsWith("http")) return;
+
+  // For navigation requests (page loads) — network first, fallback to cache
+  if (req.mode === "navigate") {
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then(c => c.put(req, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req))
     );
     return;
   }
 
-  // Everything else — network first, fallback to cache, then serve index.html
-  event.respondWith(
+  // For everything else — network first, cache fallback
+  e.respondWith(
     fetch(req)
       .then(res => {
-        if (res.ok) {
-          caches.open(CACHE_NAME).then(c => c.put(req, res.clone()));
+        // Only cache successful same-origin responses
+        if (res.ok && url.origin === self.location.origin) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(req, clone));
         }
         return res;
       })
-      .catch(() =>
-        caches.match(req).then(cached => {
-          if (cached) return cached;
-          // Fallback: serve index.html for navigation requests
-          if (req.mode === "navigate") {
-            return caches.match(BASE_PATH + "index.html");
-          }
-        })
-      )
+      .catch(() => caches.match(req))
   );
 });
