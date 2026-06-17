@@ -1,7 +1,7 @@
 // Portal PWA Service Worker
 // Automatically handles GitHub Pages subpath (e.g. /repo-name/)
 
-const CACHE_NAME = "portal-cache-v3";
+const CACHE_NAME = "portal-cache-v4";
 
 // Detect base path at install time from SW's own URL
 const SW_URL   = self.location.href;
