@@ -502,6 +502,207 @@ input[type="email"] {
   }
 }
 
+
+
+
+/* ══════════════════════════════
+   SAFETY DASHBOARD — native card
+══════════════════════════════ */
+
+/* Hero preview card */
+.safety-card {
+  grid-column: 1 / -1;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.3) inset;
+  animation: cardIn .4s cubic-bezier(.22,1,.36,1) both;
+  cursor: pointer;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #172554 100%);
+  display: flex; align-items: stretch;
+  min-height: 130px;
+}
+.safety-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 16px 40px rgba(0,0,0,0.28); }
+.safety-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 18px, rgba(252,211,77,0.04) 18px, rgba(252,211,77,0.04) 20px);
+  pointer-events: none;
+}
+
+.sc-left {
+  flex: 1; padding: 1.25rem 1.5rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; z-index: 1;
+}
+.sc-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(252,211,77,0.15);
+  border: 1px solid rgba(252,211,77,0.3);
+  border-radius: 6px; padding: 3px 9px;
+  font-size: 10px; font-weight: 700; color: #fcd34d;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  width: fit-content; margin-bottom: 0.6rem;
+}
+.sc-badge span { width: 6px; height: 6px; border-radius: 50%; background: #fcd34d; animation: pulse 1.5s ease infinite; }
+.sc-title { font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 4px; }
+.sc-number {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800; color: #fff; line-height: 1;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 20px rgba(59,130,246,0.4);
+}
+.sc-number sup { font-size: 40%; vertical-align: super; opacity: 0.6; font-weight: 600; }
+.sc-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.sc-right {
+  width: 170px; flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column;
+  position: relative; z-index: 1;
+}
+.sc-stat {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sc-stat:last-child { border-bottom: none; }
+.sc-stat-value { font-size: clamp(1rem, 2.5vw, 1.5rem); font-weight: 700; color: #fff; line-height: 1; }
+.sc-stat-value.green { color: #34d399; }
+.sc-stat-label { font-size: 9px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px; }
+
+.sc-open-hint {
+  position: absolute; bottom: 10px; right: 10px;
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 3px 8px;
+  font-size: 10px; color: rgba(255,255,255,0.4);
+  pointer-events: none; z-index: 2;
+}
+
+/* Full-screen safety view */
+#safety-view {
+  flex: 1; display: none; flex-direction: column;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #172554 100%);
+  overflow: hidden; position: relative;
+}
+#safety-view.active { display: flex; }
+
+.sv-topbar {
+  height: 52px; flex-shrink: 0;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; padding: 0 1rem; gap: 10px;
+}
+.sv-back {
+  display: flex; align-items: center; gap: 6px;
+  color: rgba(255,255,255,0.6); font-size: 13px;
+  cursor: pointer; padding: 4px 10px; border-radius: 8px;
+  border: 1px solid transparent; transition: all .15s;
+}
+.sv-back:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); color: #fff; }
+.sv-title { flex: 1; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.55); text-align: center; }
+
+/* Hazard strip */
+.sv-hazard {
+  height: 8px; flex-shrink: 0;
+  background: repeating-linear-gradient(-45deg, #fcd34d, #fcd34d 10px, #1e293b 10px, #1e293b 20px);
+  animation: moveStripes2 40s linear infinite;
+}
+@keyframes moveStripes2 { from { background-position: 0 0; } to { background-position: 1000px 0; } }
+
+/* Safety content area */
+.sv-body {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem 1.5rem; gap: 1.5rem;
+  position: relative;
+}
+
+/* Floating orbs in safety view */
+.sv-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.2; pointer-events: none; }
+.sv-orb1 { width: 300px; height: 300px; background: radial-gradient(circle, #3b82f6, transparent); top: -80px; left: -60px; }
+.sv-orb2 { width: 200px; height: 200px; background: radial-gradient(circle, #fcd34d, transparent); bottom: -40px; right: -40px; }
+
+.sv-dept {
+  text-align: center; z-index: 1;
+}
+.sv-dept-name {
+  font-size: clamp(1.1rem, 3.5vw, 2rem);
+  font-weight: 800; color: #fff;
+  text-transform: uppercase; letter-spacing: 1px;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.sv-dept-sub {
+  font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+  color: #93c5fd; text-transform: uppercase;
+  letter-spacing: 3px; margin-top: 4px;
+}
+
+/* Big counter */
+.sv-counter-wrap {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 24px;
+  padding: 2rem 2.5rem;
+  text-align: center; z-index: 1; width: 100%; max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.2) inset;
+  position: relative; overflow: hidden;
+}
+.sv-counter-wrap::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.sv-counter-label {
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+  color: rgba(255,255,255,0.45); text-transform: uppercase;
+  letter-spacing: 2px; font-weight: 700; margin-bottom: 0.75rem;
+}
+.sv-counter-number {
+  font-size: clamp(2.5rem, 10vw, 6rem);
+  font-weight: 800; color: #fff; line-height: 1;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 32px rgba(59,130,246,0.5);
+  font-variant-numeric: tabular-nums;
+}
+.sv-counter-unit {
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+  color: rgba(255,255,255,0.4); text-transform: uppercase;
+  letter-spacing: 2px; margin-top: 6px;
+}
+
+/* Bottom stats row */
+.sv-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; width: 100%; max-width: 500px; z-index: 1;
+}
+.sv-stat-box {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 1rem 0.75rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.1) inset;
+}
+.sv-stat-val { font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 700; color: #fff; line-height: 1; }
+.sv-stat-val.accent { color: #34d399; }
+.sv-stat-lbl { font-size: 9px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 4px; }
+
+@media (max-width: 640px) {
+  .sc-right { width: 130px; }
+  .sv-stats { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .sv-body { padding: 1.25rem 1rem; gap: 1rem; }
+  .sv-counter-wrap { padding: 1.5rem 1.25rem; }
+}
+
 </style>
 </head>
 <body>
@@ -671,6 +872,46 @@ input[type="email"] {
           <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
           <div class="iframe-notice">Press Back to return to portal</div>
         </div>
+
+        <!-- Safety full-screen view -->
+        <div id="safety-view">
+          <div class="sv-topbar">
+            <div class="sv-back" onclick="showProjects()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              Back
+            </div>
+            <div class="sv-title">Safety &amp; Environment Dashboard</div>
+          </div>
+          <div class="sv-hazard"></div>
+          <div class="sv-body">
+            <div class="sv-orb sv-orb1"></div>
+            <div class="sv-orb sv-orb2"></div>
+            <div class="sv-dept">
+              <div class="sv-dept-name">Safety &amp; Environment Department</div>
+              <div class="sv-dept-sub">HLL Lifecare Ltd &middot; Peroorkada Factory</div>
+            </div>
+            <div class="sv-counter-wrap">
+              <div class="sv-counter-label">Accident Free Manhours Continuously Worked</div>
+              <div class="sv-counter-number" id="sv-manhours">0</div>
+              <div class="sv-counter-unit">Manhours &middot; Cumulative Total</div>
+            </div>
+            <div class="sv-stats">
+              <div class="sv-stat-box">
+                <div class="sv-stat-val" id="sv-incident-date">--</div>
+                <div class="sv-stat-lbl">Last Incident</div>
+              </div>
+              <div class="sv-stat-box">
+                <div class="sv-stat-val">1,500</div>
+                <div class="sv-stat-lbl">Total Workforce</div>
+              </div>
+              <div class="sv-stat-box">
+                <div class="sv-stat-val accent" id="sv-days">0</div>
+                <div class="sv-stat-lbl">Safe Days</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1063,10 +1304,12 @@ async function renderHome() {
         <span class="nav-label">${p.name}</span>
       </div>`).join("");
 
+    const safetyCard = buildSafetyCard();
+
     if (!projects.length) {
-      grid.innerHTML = `<div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;padding-top:2rem;text-align:center">No projects yet. Ask your admin to add some.</div>`;
+      grid.innerHTML = safetyCard + `<div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;padding-top:1rem;text-align:center">No projects yet. Ask your admin to add some.</div>`;
     } else {
-      grid.innerHTML = projects.map((p,i) => `
+      grid.innerHTML = safetyCard + projects.map((p,i) => `
         <div class="proj-card" onclick="openProject('${p.id}','${encodeURIComponent(p.url)}')" style="animation-delay:${i*.05}s">
           <div class="proj-icon" style="background:${p.bg||'rgba(255,255,255,0.1)'}">${p.icon||'📁'}</div>
           <div class="proj-name">${p.name}</div>
@@ -1085,8 +1328,20 @@ async function renderHome() {
 function showProjects() {
   document.getElementById("projects-view").style.display = "grid";
   document.getElementById("iframe-view").classList.remove("active");
+  // Stop safety view timer
+  const sv = document.getElementById("safety-view");
+  if (sv) sv.classList.remove("active");
+  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
+  // Reset iframe
+  const iframe = document.getElementById("portal-iframe");
+  if (iframe) { iframe.srcdoc = ""; iframe.src = "about:blank"; }
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.querySelector(".sidebar .nav-item:first-of-type").classList.add("active");
+  document.querySelector(".sidebar .nav-item:first-of-type")?.classList.add("active");
+  // Mobile nav
+  const bnBack = document.getElementById("bn-back");
+  const bnProj = document.getElementById("bn-projects");
+  if (bnBack) bnBack.style.display = "none";
+  if (bnProj) { bnProj.style.display = ""; bnProj.classList.add("active"); }
 }
 
 let currentExtUrl = "";
@@ -1457,6 +1712,118 @@ openProject = function(id, encodedUrl) {
   document.getElementById("bn-back").style.display = "";
   document.getElementById("bn-projects").style.display = "none";
 };
+
+
+
+
+// ══════════════════════════════════════════════════
+//  SAFETY DASHBOARD — native portal view
+// ══════════════════════════════════════════════════
+const ACCIDENT_DATE  = new Date('2023-12-02T00:00:00');
+const SAFETY_WORKERS = 1500;
+const SAFETY_SHIFT   = 8;
+let safetyTimer      = null;
+let safetyAnimated   = false;
+
+function buildSafetyCard() {
+  // Compute live values for the preview card
+  const diffMs   = Date.now() - ACCIDENT_DATE;
+  const days     = Math.floor(diffMs / 86400000);
+  const mh       = Math.floor(diffMs / 3600000 * SAFETY_WORKERS / 24 * SAFETY_SHIFT );
+  const mhFmt    = mh.toLocaleString('en-IN');
+  const daysFmt  = days.toLocaleString('en-IN');
+  const dateFmt  = ACCIDENT_DATE.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+  return `
+    <div class="safety-card" onclick="openSafetyView()">
+      <div class="sc-left">
+        <div>
+          <div class="sc-badge"><span></span> Live</div>
+          <div class="sc-title">Accident Free Manhours</div>
+          <div class="sc-number">${mhFmt}<sup>hrs</sup></div>
+          <div class="sc-sub">Safety &amp; Environment Dept · HLL Lifecare</div>
+        </div>
+      </div>
+      <div class="sc-right">
+        <div class="sc-stat">
+          <div class="sc-stat-value green">${daysFmt}</div>
+          <div class="sc-stat-label">Safe Days</div>
+        </div>
+        <div class="sc-stat">
+          <div class="sc-stat-value">1,500</div>
+          <div class="sc-stat-label">Workforce</div>
+        </div>
+        <div class="sc-stat">
+          <div class="sc-stat-value" style="font-size:clamp(0.7rem,1.8vw,1rem)">${dateFmt}</div>
+          <div class="sc-stat-label">Last Incident</div>
+        </div>
+      </div>
+      <div class="sc-open-hint">
+        <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        Open
+      </div>
+    </div>`;
+}
+
+function openSafetyView() {
+  // Hide other views
+  document.getElementById("projects-view").style.display = "none";
+  document.getElementById("iframe-view").classList.remove("active");
+  document.getElementById("safety-view").classList.add("active");
+
+  // Mobile nav
+  const bnBack = document.getElementById("bn-back");
+  const bnProj = document.getElementById("bn-projects");
+  if (bnBack) bnBack.style.display = "";
+  if (bnProj) { bnProj.style.display = "none"; bnProj.classList.remove("active"); }
+
+  // Sidebar
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+
+  // Init counter
+  safetyAnimated = false;
+  updateSafetyView();
+  if (safetyTimer) clearInterval(safetyTimer);
+  safetyTimer = setInterval(updateSafetyView, 1000);
+}
+
+function updateSafetyView() {
+  const diffMs  = Date.now() - ACCIDENT_DATE;
+  const days    = Math.floor(diffMs / 86400000);
+  const mh      = Math.floor((diffMs / 3600000) * (SAFETY_WORKERS * SAFETY_SHIFT / 24));
+  const mhFmt   = mh.toLocaleString('en-IN');
+  const daysFmt = days.toLocaleString('en-IN');
+  const dateEl  = document.getElementById("sv-incident-date");
+  const daysEl  = document.getElementById("sv-days");
+  const mhEl    = document.getElementById("sv-manhours");
+
+  if (!mhEl) return;
+
+  if (dateEl && dateEl.textContent === "--") {
+    dateEl.textContent = ACCIDENT_DATE.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  }
+  if (daysEl) daysEl.textContent = daysFmt;
+
+  if (!safetyAnimated) {
+    safetyAnimated = true;
+    animateSafetyCounter(mhEl, 0, mh, 1400);
+  } else {
+    mhEl.textContent = mhFmt;
+  }
+}
+
+function animateSafetyCounter(el, from, to, dur) {
+  let start = null;
+  const step = (ts) => {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 4);
+    el.textContent = Math.floor(ease * (to - from) + from).toLocaleString('en-IN');
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = to.toLocaleString('en-IN');
+  };
+  requestAnimationFrame(step);
+}
 
 </script>
 </body>
