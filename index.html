@@ -668,6 +668,43 @@ input[type="email"] {
   .sv-counter-wrap { padding: 1.5rem 1.25rem; }
 }
 
+
+/* Iframe blocked fallback */
+.iframe-blocked {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg,#0d1117,#1c2333);
+}
+.iframe-blocked.show { display: flex; }
+.ib-icon {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.ib-title { font-size: 16px; font-weight: 600; color: #fff; }
+.ib-sub {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  max-width: 320px; line-height: 1.6;
+}
+.ib-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(59,130,246,0.18);
+  border: 1px solid rgba(59,130,246,0.35);
+  border-radius: 10px; padding: 10px 20px;
+  font-size: 14px; font-weight: 500; color: #93c5fd;
+  cursor: pointer; font-family: var(--font);
+  transition: background .15s;
+}
+.ib-btn:hover { background: rgba(59,130,246,0.3); }
+
 </style>
 </head>
 <body>
@@ -834,8 +871,21 @@ input[type="email"] {
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
             </button>
           </div>
-          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
-          <div class="iframe-notice">Press Back to return to portal</div>
+          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" onload="onIframeLoad(this)"></iframe>
+          <div class="iframe-blocked" id="iframe-blocked">
+            <div class="ib-icon">🔗</div>
+            <div class="ib-title">Cannot preview this site</div>
+            <div class="ib-sub">This site has restricted embedding. Open it directly in a new tab instead.</div>
+            <button class="ib-btn" onclick="openExternal()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Open in new tab
+            </button>
+            <button class="ib-btn" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)" onclick="showProjects()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+              Back to projects
+            </button>
+          </div>
+          <div class="iframe-notice" id="iframe-notice">Press Back to return to portal</div>
         </div>
 
         <!-- Safety full-screen view -->
@@ -1295,13 +1345,51 @@ let currentExtUrl = "";
 function openProject(id, encodedUrl) {
   const url = decodeURIComponent(encodedUrl);
   currentExtUrl = url;
+  // Reset fallback state
+  const blocked = document.getElementById("iframe-blocked");
+  const iframe  = document.getElementById("portal-iframe");
+  const notice  = document.getElementById("iframe-notice");
+  if (blocked) blocked.classList.remove("show");
+  if (iframe)  iframe.style.display = "block";
+  if (notice)  notice.style.display = "";
   document.getElementById("iframe-url-bar").textContent = url;
-  document.getElementById("portal-iframe").src = url;
+  iframe.src = url;
   document.getElementById("projects-view").style.display = "none";
   document.getElementById("iframe-view").classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
 }
 function openExternal() { window.open(currentExtUrl, "_blank"); }
+
+function onIframeLoad(iframe) {
+  // Detect blank/blocked iframe: if contentDocument is accessible but empty,
+  // or if it loaded but body has no content, show fallback
+  const blocked = document.getElementById("iframe-blocked");
+  const notice  = document.getElementById("iframe-notice");
+  if (!blocked) return;
+  try {
+    // If we can access contentDocument and it has no meaningful content
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (doc && (doc.body === null || doc.body.innerHTML.trim() === "")) {
+      blocked.classList.add("show");
+      iframe.style.display = "none";
+      if (notice) notice.style.display = "none";
+      // Auto-open in new tab since the site can't be embedded
+      if (currentExtUrl && currentExtUrl !== "about:blank") {
+        window.open(currentExtUrl, "_blank");
+      }
+    } else {
+      blocked.classList.remove("show");
+      iframe.style.display = "block";
+      if (notice) notice.style.display = "";
+    }
+  } catch (e) {
+    // Cross-origin — if src is set (not about:blank) assume it loaded OK
+    // (X-Frame-Options blocks show as empty doc, not as exceptions)
+    blocked.classList.remove("show");
+    iframe.style.display = "block";
+    if (notice) notice.style.display = "";
+  }
+}
 
 // ─── Admin ────────────────────────────────────────
 async function renderAdmin() {
