@@ -1241,26 +1241,31 @@ async function renderHome() {
     const projRes  = await api("getProjects");
     const projects = projRes.projects || [];
 
-    document.getElementById("sidebar-projects").innerHTML = projects.map(p => `
-      <div class="nav-item" onclick="openProject('${p.id}','${encodeURIComponent(p.url)}')">
+    document.getElementById("sidebar-projects").innerHTML = projects.map(p => {
+      const safeUrl = encodeURIComponent(p.url);
+      return `<div class="nav-item" onclick="openProject('${p.id}','${safeUrl}')">
         <div class="nav-icon">${p.icon||'📁'}</div>
         <span class="nav-label">${p.name}</span>
-      </div>`).join("");
+      </div>`;
+    }).join("");
 
     const safetyCard = buildSafetyCard();
 
     if (!projects.length) {
       grid.innerHTML = safetyCard + `<div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;padding-top:1rem;text-align:center">No projects yet. Ask your admin to add some.</div>`;
     } else {
-      grid.innerHTML = safetyCard + projects.map((p,i) => `
-        <div class="proj-card" onclick="openProject('${p.id}','${encodeURIComponent(p.url)}')" style="animation-delay:${i*.05}s">
+      grid.innerHTML = safetyCard + projects.map((p,i) => {
+        const safeUrl = encodeURIComponent(p.url);
+        const safeName = p.name.replace(/'/g,"&#39;");
+        return `<div class="proj-card" onclick="openProject('${p.id}','${safeUrl}')" style="animation-delay:${i*.05}s">
           <div class="proj-icon" style="background:${p.bg||'rgba(255,255,255,0.1)'}">${p.icon||'📁'}</div>
-          <div class="proj-name">${p.name}</div>
+          <div class="proj-name">${safeName}</div>
           <div class="proj-desc">${p.desc||''}</div>
           <div class="proj-cta">
             <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>Open project
           </div>
-        </div>`).join("");
+        </div>`;
+      }).join("");
     }
     showProjects();
     // Start live counter on the safety card (needs DOM to exist first)
