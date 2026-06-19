@@ -217,8 +217,9 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
 .iframe-back{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;padding:4px 8px;border-radius:7px;transition:all .15s;border:1px solid transparent}
 .iframe-back:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:#fff}
 .iframe-url{flex:1;font-size:12px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:4px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iframe-title{flex:1;font-size:13px;font-weight:500;color:rgba(255,255,255,0.7);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.1px}
 #portal-iframe{flex:1;border:none;width:100%}
-.iframe-notice{position:absolute;bottom:1rem;right:1rem;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 12px;font-size:11px;color:rgba(255,255,255,0.5);pointer-events:none}
+
 
 /* ─── Admin ─── */
 #admin-screen{flex-direction:column;align-items:stretch;justify-content:flex-start}
@@ -388,7 +389,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
 
   /* iframe back bar on mobile */
   .iframe-bar { padding: 0 0.75rem; gap: 6px; }
-  .iframe-url { display: none; }
 
   /* Topbar compact */
   .topbar { padding: 0 1rem; }
@@ -840,7 +840,7 @@ input[type="email"] {
             <div class="iframe-back" onclick="showProjects()">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Back
             </div>
-            <div class="iframe-url" id="iframe-url-bar"></div>
+            <div class="iframe-title" id="iframe-url-bar"></div>
             <button class="topbar-btn" onclick="openExternal()">
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
             </button>
@@ -859,7 +859,6 @@ input[type="email"] {
               Back
             </button>
           </div>
-          <div class="iframe-notice" id="iframe-notice">Press Back to return to portal</div>
         </div>
 
         <!-- Safety full-screen view -->
@@ -1265,6 +1264,7 @@ async function renderHome() {
     const projRes  = await api("getProjects");
     const projects = projRes.projects || [];
 
+    window._currentProjects = projects; // cache for name lookup in openProject
     document.getElementById("sidebar-projects").innerHTML = projects.map(p => {
       const safeUrl = encodeURIComponent(p.url);
       return `<div class="nav-item" onclick="openProject('${p.id}','${safeUrl}')">
@@ -1337,7 +1337,9 @@ function openProject(id, encodedUrl) {
   document.getElementById("safety-view").classList.remove("active");
   document.getElementById("iframe-view").classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById("iframe-url-bar").textContent = url;
+  // Show project name in bar (not raw URL)
+  const proj = (window._currentProjects||[]).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
+  document.getElementById("iframe-url-bar").textContent = proj ? proj.name : "Project";
   // Load the project — sandbox prevents frame-busting JS
   if (iframe) iframe.src = url;
 }
