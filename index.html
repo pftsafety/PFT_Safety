@@ -871,7 +871,7 @@ input[type="email"] {
               <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
             </button>
           </div>
-          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" onload="onIframeLoad(this)"></iframe>
+          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
           <div class="iframe-blocked" id="iframe-blocked">
             <div class="ib-icon">🔗</div>
             <div class="ib-title">Cannot preview this site</div>
@@ -1326,17 +1326,24 @@ async function renderHome() {
 }
 
 function showProjects() {
-  document.getElementById("projects-view").style.display = "grid";
+  // Clear iframe check timer
+  if (window._iframeTimer) { clearTimeout(window._iframeTimer); window._iframeTimer = null; }
+  // Hide all content views
   document.getElementById("iframe-view").classList.remove("active");
-  // Stop safety view timer
-  const sv = document.getElementById("safety-view");
-  if (sv) sv.classList.remove("active");
-  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
-  // Restart home card live counter
-  requestAnimationFrame(() => startCardLiveCounter());
+  document.getElementById("safety-view").classList.remove("active");
+  document.getElementById("projects-view").style.display = "grid";
   // Reset iframe
   const iframe = document.getElementById("portal-iframe");
-  if (iframe) { iframe.srcdoc = ""; iframe.src = "about:blank"; }
+  if (iframe) iframe.src = "about:blank";
+  // Reset blocked state
+  const blocked = document.getElementById("iframe-blocked");
+  const notice  = document.getElementById("iframe-notice");
+  if (blocked) blocked.classList.remove("show");
+  if (notice)  notice.style.display = "";
+  // Stop safety full-view timer, restart card counter
+  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
+  requestAnimationFrame(() => startCardLiveCounter());
+  // Nav
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   document.querySelector(".sidebar .nav-item:first-of-type")?.classList.add("active");
 }
@@ -1345,78 +1352,44 @@ let currentExtUrl = "";
 function openProject(id, encodedUrl) {
   const url = decodeURIComponent(encodedUrl);
   currentExtUrl = url;
-  // Clear any previous block detection timer
-  if (iframeCheckTimer) { clearTimeout(iframeCheckTimer); iframeCheckTimer = null; }
-  // Reset fallback state
+  const iframe = document.getElementById("portal-iframe");
   const blocked = document.getElementById("iframe-blocked");
-  const iframe  = document.getElementById("portal-iframe");
   const notice  = document.getElementById("iframe-notice");
+  // Reset state
   if (blocked) blocked.classList.remove("show");
-  if (iframe)  { iframe.style.display = "block"; iframe.src = "about:blank"; }
   if (notice)  notice.style.display = "";
-  document.getElementById("iframe-url-bar").textContent = url;
+  if (iframe)  iframe.style.display = "block";
+  // Show iframe view
   document.getElementById("projects-view").style.display = "none";
+  document.getElementById("safety-view").classList.remove("active");
   document.getElementById("iframe-view").classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  // Small delay before setting src so the reset renders first
-  setTimeout(() => { if (iframe) iframe.src = url; }, 50);
-}
-function openExternal() { window.open(currentExtUrl, "_blank"); }
-
-let iframeCheckTimer = null;
-
-function onIframeLoad(iframe) {
-  // Clear any pending check
-  if (iframeCheckTimer) { clearTimeout(iframeCheckTimer); iframeCheckTimer = null; }
-
-  const src = iframe.src || "";
-  // Ignore about:blank loads (reset)
-  if (!src || src === "about:blank" || src === window.location.href) return;
-
-  const blocked = document.getElementById("iframe-blocked");
-  const notice  = document.getElementById("iframe-notice");
-
-  // Method 1: try reading contentDocument — works for same-origin
-  try {
-    const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (doc && doc.body !== null && doc.body.innerHTML.trim() !== "") {
-      // Content loaded fine
-      if (blocked) blocked.classList.remove("show");
-      iframe.style.display = "block";
-      if (notice) notice.style.display = "";
-      return;
-    }
-  } catch(e) {
-    // Cross-origin block — fall through to show blocked UI
-  }
-
-  // Method 2: use a MutationObserver + timeout
-  // If iframe stays empty after 3 seconds → blocked
-  iframeCheckTimer = setTimeout(() => {
+  document.getElementById("iframe-url-bar").textContent = url;
+  // Set iframe src directly
+  if (iframe) iframe.src = url;
+  // After 3s, if still blank → auto open in new tab
+  if (window._iframeTimer) clearTimeout(window._iframeTimer);
+  window._iframeTimer = setTimeout(() => {
     try {
       const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      const hasContent = doc && doc.body && doc.body.innerHTML.trim() !== "";
-      if (!hasContent) {
-        showIframeBlocked(iframe);
+      if (!doc || !doc.body || doc.body.innerHTML.trim() === "") {
+        window.open(url, "_blank");
+        if (blocked) blocked.classList.add("show");
+        if (iframe)  iframe.style.display = "none";
+        if (notice)  notice.style.display = "none";
       }
     } catch(e) {
-      // Still cross-origin after timeout — definitely blocked
-      showIframeBlocked(iframe);
+      // Cross-origin and blank = blocked
+      window.open(url, "_blank");
+      if (blocked) blocked.classList.add("show");
+      if (iframe)  iframe.style.display = "none";
+      if (notice)  notice.style.display = "none";
     }
   }, 3000);
 }
+function openExternal() { window.open(currentExtUrl, "_blank"); }
 
-function showIframeBlocked(iframe) {
-  const blocked = document.getElementById("iframe-blocked");
-  const notice  = document.getElementById("iframe-notice");
-  if (blocked) blocked.classList.add("show");
-  if (iframe)  iframe.style.display = "none";
-  if (notice)  notice.style.display = "none";
-  // Auto open in new tab
-  if (currentExtUrl && currentExtUrl !== "about:blank") {
-    window.open(currentExtUrl, "_blank");
-  }
-}
+
 
 // ─── Admin ────────────────────────────────────────
 async function renderAdmin() {
