@@ -813,6 +813,29 @@ input[type="email"] {
 .pin-reset-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(255,255,255,0.12)}
 .pin-reset-hint{font-size:11px;color:rgba(255,255,255,0.3)}
 
+
+/* ── Forgot PIN overlay (sits over auth-right content) ── */
+.forgot-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(15,12,41,0.0);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 2.25rem 1.75rem;
+  border-radius: 0 28px 28px 0;
+  overflow-y: auto;
+  z-index: 10;
+  animation: rise .3s cubic-bezier(.22,1,.36,1) both;
+}
+.forgot-overlay.show { display: flex; }
+.auth-right { position: relative; }
+@media (max-width: 640px) {
+  .forgot-overlay { border-radius: 0 0 20px 20px; padding: 1.75rem 1.25rem 1.5rem; }
+}
+
 </style>
 </head>
 <body>
@@ -895,30 +918,30 @@ input[type="email"] {
       <p class="admin-toggle" style="margin-top:6px" onclick="showForgotPin()">Forgot PIN?</p>
     </div>
 
-    <!-- Forgot PIN panel (replaces sign-in keypad) -->
-    <div class="forgot-panel auth-panel" id="panel-forgot">
+    <!-- Forgot PIN overlay inside auth-right -->
+    <div class="forgot-overlay" id="forgot-overlay">
       <button class="forgot-back" onclick="hideForgotPin()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         Back to Sign In
       </button>
-      <div class="lock-avatar" style="font-size:24px">🔑</div>
-      <p class="forgot-title">Reset your PIN</p>
-      <p class="forgot-sub">Enter your username and submit a reset request. The admin will set a new PIN and let you know.</p>
-
-      <div id="forgot-form" style="width:100%">
-        <div class="field" style="margin-bottom:1rem">
-          <label class="field-label">Username</label>
-          <input class="field-input" id="forgot-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+      <div id="forgot-form-inner" style="width:100%">
+        <div style="text-align:center;margin-bottom:1.25rem">
+          <div class="lock-avatar" style="margin:0 auto .75rem;font-size:22px">🔑</div>
+          <p class="lock-title" style="font-size:17px">Reset your PIN</p>
+          <p class="lock-sub" style="margin-bottom:0">Enter your username — admin will set a new PIN and share it with you</p>
         </div>
-        <button class="submit-btn" onclick="submitForgotPin()">Request PIN Reset →</button>
-        <p class="signup-err" id="forgot-err" style="margin-top:8px"></p>
+        <div class="field">
+          <label class="field-label">Username</label>
+          <input class="field-input" id="fp-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+        </div>
+        <button class="submit-btn" onclick="submitForgotPin()">Request PIN Reset</button>
+        <p class="signup-err" id="fp-err" style="margin-top:8px"></p>
       </div>
-
-      <div class="signup-success" id="forgot-success">
+      <div class="signup-success" id="fp-success" style="display:none">
         <div class="success-icon">✅</div>
         <p class="success-title">Request sent!</p>
-        <p class="success-sub">The admin has been notified. They will reset your PIN and contact you with the new one.</p>
-        <button class="submit-btn" style="margin-top:.5rem;max-width:200px" onclick="hideForgotPin()">Back to Sign In</button>
+        <p class="success-sub">The admin will reset your PIN and share the new one with you.</p>
+        <button class="submit-btn" style="max-width:200px;margin-top:.25rem" onclick="hideForgotPin()">Back to Sign In</button>
       </div>
     </div>
 
@@ -2033,28 +2056,26 @@ function animateSafetyCounter(el, from, to, dur) {
 
 // ── Sign-in screen navigation ──
 function showForgotPin() {
-  // Switch to forgot panel
-  ["signin","signup","forgot"].forEach(t => {
-    document.getElementById("tab-"   + (t==="forgot"?"signin":t))?.classList.remove("active");
-    document.getElementById("panel-" + t)?.classList.remove("active");
-  });
-  document.getElementById("panel-forgot").classList.add("active");
-  // Hide tabs (no tab for forgot)
-  document.querySelector(".auth-tabs").style.visibility = "hidden";
-  document.getElementById("fp-err").textContent = "";
+  const overlay = document.getElementById("forgot-overlay");
+  if (!overlay) return;
+  // Reset form state
   document.getElementById("fp-username").value = "";
-  document.getElementById("fp-form-wrap")?.classList.remove("show");
-  document.getElementById("fp-success")?.classList.remove("show");
-  document.getElementById("forgot-form-wrap").style.display = "";
-  document.getElementById("fp-success").classList.remove("show");
+  document.getElementById("fp-err").textContent = "";
+  document.getElementById("forgot-form-inner").style.display = "";
+  document.getElementById("fp-success").style.display = "none";
+  overlay.classList.add("show");
+  setTimeout(() => document.getElementById("fp-username").focus(), 50);
+}
+
+function hideForgotPin() {
+  const overlay = document.getElementById("forgot-overlay");
+  if (overlay) overlay.classList.remove("show");
 }
 
 function showSignIn() {
-  document.getElementById("panel-forgot").classList.remove("active");
-  document.querySelector(".auth-tabs").style.visibility = "";
+  hideForgotPin();
   switchAuthTab("signin");
 }
-
 async function submitForgotPin() {
   const username = document.getElementById("fp-username").value.trim();
   const errEl    = document.getElementById("fp-err");
@@ -2072,8 +2093,8 @@ async function submitForgotPin() {
       return;
     }
     // Show success
-    document.getElementById("forgot-form-wrap").style.display = "none";
-    document.getElementById("fp-success").classList.add("show");
+    document.getElementById("forgot-form-inner").style.display = "none";
+    document.getElementById("fp-success").style.display = "flex";
   } catch(e) {
     spin(false);
     errEl.textContent = "Error: " + e.message;
