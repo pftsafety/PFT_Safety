@@ -679,6 +679,140 @@ input[type="email"] {
 .ib-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;color:#93c5fd;cursor:pointer;font-family:var(--font);transition:background .15s}
 .ib-btn:hover{background:rgba(59,130,246,0.28)}
 
+
+/* ── Forgot PIN panel ── */
+.forgot-panel{display:none;width:100%;flex-direction:column;align-items:center;gap:0}
+.forgot-panel.active{display:flex}
+.forgot-back{
+  align-self:flex-start;display:flex;align-items:center;gap:5px;
+  font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;
+  margin-bottom:1.25rem;transition:color .15s;background:none;border:none;
+  font-family:var(--font);padding:0;
+}
+.forgot-back:hover{color:rgba(255,255,255,0.8)}
+.forgot-title{font-size:17px;font-weight:600;color:#fff;margin-bottom:4px;text-align:center}
+.forgot-sub{font-size:12px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.6;margin-bottom:1.4rem;max-width:240px}
+
+/* Admin reset PIN inline form */
+.reset-pin-form{
+  display:none;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;padding:10px 12px;margin-top:8px;
+  gap:8px;align-items:center;flex-wrap:wrap;
+}
+.reset-pin-form.show{display:flex}
+.reset-pin-input{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:8px;padding:6px 10px;
+  font-size:14px;color:#fff;font-family:var(--font);
+  width:100px;outline:none;letter-spacing:3px;
+  text-align:center;
+}
+.reset-pin-input::placeholder{letter-spacing:0;font-size:12px;color:rgba(255,255,255,0.25)}
+.reset-pin-label{font-size:11px;color:rgba(255,255,255,0.4);flex:1}
+
+/* Reset request badge in requests tab */
+.badge-orange{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.25)}
+
+
+/* ── Forgot PIN panel ── */
+.forgot-panel{display:none;width:100%;flex-direction:column;align-items:center;gap:12px}
+.forgot-panel.active{display:flex}
+.forgot-back{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;color:rgba(255,255,255,0.4);
+  cursor:pointer;align-self:flex-start;
+  transition:color .15s;margin-bottom:4px;
+  background:none;border:none;font-family:var(--font);padding:0;
+}
+.forgot-back:hover{color:rgba(255,255,255,0.8)}
+.forgot-icon{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(59,130,246,0.1);
+  border:1.5px solid rgba(59,130,246,0.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:4px;
+}
+.forgot-title{font-size:16px;font-weight:600;color:#fff;margin-bottom:2px}
+.forgot-sub{font-size:12px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.6;max-width:240px;margin-bottom:4px}
+.forgot-err{font-size:12px;color:#fca5a5;min-height:16px;text-align:center}
+
+/* reset success */
+.reset-success{display:none;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.reset-success.show{display:flex}
+
+/* Admin reset pin inline row */
+.reset-pin-row{
+  display:none;
+  align-items:center;gap:6px;
+  margin-top:6px;padding:8px 10px;
+  background:rgba(59,130,246,0.08);
+  border:1px solid rgba(59,130,246,0.2);
+  border-radius:9px;
+}
+.reset-pin-row.show{display:flex}
+.reset-pin-input{
+  width:100px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:7px;padding:5px 10px;
+  font-size:13px;color:#fff;font-family:var(--font);
+  outline:none;letter-spacing:3px;
+}
+.reset-pin-input::placeholder{letter-spacing:0;color:rgba(255,255,255,0.25)}
+.reset-pin-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(59,130,246,0.08)}
+
+
+/* Admin reset PIN inline form */
+.reset-pin-form{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 12px;
+  background:rgba(59,130,246,0.06);
+  border:1px solid rgba(59,130,246,0.18);
+  border-radius:10px;
+}
+.reset-pin-label{font-size:12px;color:rgba(255,255,255,0.5);white-space:nowrap}
+
+
+/* ── Forgot PIN panel ── */
+.forgot-panel{display:none;width:100%;flex-direction:column;align-items:center;gap:0}
+.forgot-panel.active{display:flex}
+.forgot-back{
+  align-self:flex-start;display:flex;align-items:center;gap:5px;
+  font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;
+  margin-bottom:1.25rem;transition:color .15s;border:none;background:none;
+  font-family:var(--font);padding:0;
+}
+.forgot-back:hover{color:rgba(255,255,255,0.8)}
+.forgot-title{font-size:17px;font-weight:600;color:#fff;margin-bottom:4px;text-align:center}
+.forgot-sub{font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:1.5rem;text-align:center;line-height:1.6}
+.forgot-link{
+  margin-top:.9rem;font-size:12px;color:rgba(255,255,255,0.35);
+  cursor:pointer;transition:color .15s;text-align:center;
+  border:none;background:none;font-family:var(--font);width:100%;
+}
+.forgot-link:hover{color:rgba(255,255,255,0.7)}
+
+/* ── Admin PIN reset inline form ── */
+.pin-reset-row{
+  display:none;background:rgba(59,130,246,0.07);
+  border:1px solid rgba(59,130,246,0.15);
+  border-radius:10px;padding:10px 12px;margin-top:6px;
+  flex-direction:column;gap:8px;
+}
+.pin-reset-row.open{display:flex}
+.pin-reset-inner{display:flex;gap:8px;align-items:center}
+.pin-reset-input{
+  flex:1;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:8px;padding:7px 10px;
+  font-size:13px;color:#fff;font-family:var(--font);outline:none;
+}
+.pin-reset-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(255,255,255,0.12)}
+.pin-reset-hint{font-size:11px;color:rgba(255,255,255,0.3)}
+
 </style>
 </head>
 <body>
@@ -758,6 +892,34 @@ input[type="email"] {
       <p class="lock-err" id="err-msg"></p>
       <p class="lock-err" id="lockout-msg" style="color:#fbbf24"></p>
       <p class="admin-toggle" id="admin-toggle" onclick="toggleAdminMode()">Sign in as admin</p>
+      <p class="admin-toggle" style="margin-top:6px" onclick="showForgotPin()">Forgot PIN?</p>
+    </div>
+
+    <!-- Forgot PIN panel (replaces sign-in keypad) -->
+    <div class="forgot-panel auth-panel" id="panel-forgot">
+      <button class="forgot-back" onclick="hideForgotPin()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Sign In
+      </button>
+      <div class="lock-avatar" style="font-size:24px">🔑</div>
+      <p class="forgot-title">Reset your PIN</p>
+      <p class="forgot-sub">Enter your username and submit a reset request. The admin will set a new PIN and let you know.</p>
+
+      <div id="forgot-form" style="width:100%">
+        <div class="field" style="margin-bottom:1rem">
+          <label class="field-label">Username</label>
+          <input class="field-input" id="forgot-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+        </div>
+        <button class="submit-btn" onclick="submitForgotPin()">Request PIN Reset →</button>
+        <p class="signup-err" id="forgot-err" style="margin-top:8px"></p>
+      </div>
+
+      <div class="signup-success" id="forgot-success">
+        <div class="success-icon">✅</div>
+        <p class="success-title">Request sent!</p>
+        <p class="success-sub">The admin has been notified. They will reset your PIN and contact you with the new one.</p>
+        <button class="submit-btn" style="margin-top:.5rem;max-width:200px" onclick="hideForgotPin()">Back to Sign In</button>
+      </div>
     </div>
 
     <!-- SIGN UP -->
@@ -1397,7 +1559,30 @@ function renderUsersTable(users) {
           ?`<button class="btn btn-danger btn-sm" onclick="setUserStatus('${u.id}','blocked')">Block</button>`
           :`<button class="btn btn-success btn-sm" onclick="setUserStatus('${u.id}','approved')">Approve</button>`}
         ${u.locked?`<button class="btn btn-success btn-sm" onclick="unlockUser('${u.id}')">Unlock</button>`:''}
+        <button class="btn btn-sm" style="background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.25);color:#93c5fd" onclick="togglePinReset('${u.id}')">Reset PIN</button>
         <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45)" onclick="deleteUser('${u.id}')">Remove</button>
+      </td>
+    </tr>
+    <tr id="reset-row-${u.id}" style="display:none">
+      <td colspan="6" style="padding:0 12px 10px">
+        <div class="reset-pin-form show">
+          <span class="reset-pin-label">New 4-digit PIN for <strong style="color:#fff">${u.name}</strong>:</span>
+          <input class="reset-pin-input" id="reset-pin-${u.id}" placeholder="Enter PIN" maxlength="4" type="password" inputmode="numeric">
+          <button class="btn btn-primary btn-sm" onclick="adminResetPin('${u.id}')">Set PIN</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.4)" onclick="togglePinReset('${u.id}')">Cancel</button>
+        </div>
+      </td>
+    </tr>
+    <tr id="pin-reset-row-${u.id}" class="pin-reset-tr" style="display:none">
+      <td colspan="6" style="padding:0 12px 10px">
+        <div class="pin-reset-row open">
+          <div class="pin-reset-hint">Set a new 4-digit MPIN for <strong style="color:#fff">${u.name}</strong></div>
+          <div class="pin-reset-inner">
+            <input class="pin-reset-input" id="pin-reset-input-${u.id}" type="password" maxlength="4" inputmode="numeric" placeholder="New 4-digit PIN">
+            <button class="btn btn-primary btn-sm" onclick="doResetPin('${u.id}')">Set PIN</button>
+            <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.4)" onclick="togglePinReset('${u.id}')">Cancel</button>
+          </div>
+        </div>
       </td>
     </tr>`).join("");
 }
@@ -1442,20 +1627,30 @@ function renderRequestsTable(requests) {
   const tbody = document.getElementById("requests-tbody");
   const pending = (requests||[]).filter(r => r.status === "pending").length;
   document.getElementById("req-badge").style.display = pending ? "inline-block" : "none";
-  if (!requests || !requests.length) { tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No requests yet</td></tr>`; return; }
-  tbody.innerHTML = requests.map(r => `
+  if (!requests || !requests.length) { tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No requests yet</td></tr>`; return; }
+  tbody.innerHTML = requests.map(r => {
+    const isReset = r.source === "pin_reset";
+    const typeBadge = isReset
+      ? `<span class="badge badge-orange">PIN Reset</span>`
+      : `<span class="badge badge-blue">Sign Up</span>`;
+    return `
     <tr>
       <td style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.65)">${r.username||'—'}</td>
       <td style="font-weight:500;color:#fff">${r.name}</td>
+      <td>${typeBadge}</td>
       <td><span class="badge ${r.status==='pending'?'badge-yellow':r.status==='approved'?'badge-green':'badge-red'}">${r.status}</span></td>
       <td style="color:rgba(255,255,255,0.4);font-size:12px">${fmtDate(r.created_at)}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
-        ${r.status==='pending'
+        ${r.status==='pending' && !isReset
           ?`<button class="btn btn-success btn-sm" onclick="approveRequest('${r.id}')">Approve</button>
-             <button class="btn btn-danger btn-sm"  onclick="denyRequest('${r.id}')">Deny</button>`
+             <button class="btn btn-danger btn-sm" onclick="denyRequest('${r.id}')">Deny</button>`
+          : r.status==='pending' && isReset
+          ?`<button class="btn btn-primary btn-sm" onclick="approveResetRequest('${r.id}','${r.username}')">Set New PIN</button>
+             <button class="btn btn-danger btn-sm" onclick="denyRequest('${r.id}')">Dismiss</button>`
           :`<button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.45)" onclick="deleteRequest('${r.id}')">Remove</button>`}
       </td>
-    </tr>`).join("");
+    </tr>`;
+  }).join("");
 }
 
 async function approveRequest(id) {
@@ -1829,6 +2024,121 @@ function animateSafetyCounter(el, from, to, dur) {
     else el.textContent = to.toLocaleString('en-US');
   };
   requestAnimationFrame(step);
+}
+
+
+// ══════════════════════════════════════════════════
+//  FORGOT PIN / RESET PIN
+// ══════════════════════════════════════════════════
+
+// ── Sign-in screen navigation ──
+function showForgotPin() {
+  // Switch to forgot panel
+  ["signin","signup","forgot"].forEach(t => {
+    document.getElementById("tab-"   + (t==="forgot"?"signin":t))?.classList.remove("active");
+    document.getElementById("panel-" + t)?.classList.remove("active");
+  });
+  document.getElementById("panel-forgot").classList.add("active");
+  // Hide tabs (no tab for forgot)
+  document.querySelector(".auth-tabs").style.visibility = "hidden";
+  document.getElementById("fp-err").textContent = "";
+  document.getElementById("fp-username").value = "";
+  document.getElementById("fp-form-wrap")?.classList.remove("show");
+  document.getElementById("fp-success")?.classList.remove("show");
+  document.getElementById("forgot-form-wrap").style.display = "";
+  document.getElementById("fp-success").classList.remove("show");
+}
+
+function showSignIn() {
+  document.getElementById("panel-forgot").classList.remove("active");
+  document.querySelector(".auth-tabs").style.visibility = "";
+  switchAuthTab("signin");
+}
+
+async function submitForgotPin() {
+  const username = document.getElementById("fp-username").value.trim();
+  const errEl    = document.getElementById("fp-err");
+  errEl.textContent = "";
+  if (!username) { errEl.textContent = "Please enter your username."; return; }
+
+  spin(true);
+  try {
+    // Check if username exists
+    const res = await apiRaw("forgotPinRequest", { username });
+    spin(false);
+    if (!res.ok) {
+      const msgs = { no_account: "No account found for this username.", already_pending: "A reset request is already pending for this user." };
+      errEl.textContent = msgs[res.error] || "Error: " + res.error;
+      return;
+    }
+    // Show success
+    document.getElementById("forgot-form-wrap").style.display = "none";
+    document.getElementById("fp-success").classList.add("show");
+  } catch(e) {
+    spin(false);
+    errEl.textContent = "Error: " + e.message;
+  }
+}
+
+// ── Admin: toggle PIN reset row ──
+function togglePinReset(userId) {
+  const row = document.getElementById("pin-reset-row-" + userId);
+  if (!row) return;
+  const isOpen = row.style.display !== "none";
+  // Close all open reset rows first
+  document.querySelectorAll(".pin-reset-tr").forEach(r => r.style.display = "none");
+  if (!isOpen) row.style.display = "";
+  // Focus input
+  if (!isOpen) {
+    const inp = document.getElementById("pin-reset-input-" + userId);
+    if (inp) { inp.value = ""; setTimeout(() => inp.focus(), 50); }
+  }
+}
+
+// ── Admin: do the actual PIN reset ──
+async function doResetPin(userId) {
+  const inp = document.getElementById("pin-reset-input-" + userId);
+  if (!inp) return;
+  const pin = inp.value.trim();
+  if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+    showToast("Enter a valid 4-digit PIN"); return;
+  }
+  spin(true);
+  try {
+    const pinHash = await sha256(pin);
+    await api("resetUserPin", { id: userId, pinHash });
+    // Close row, clear input, refresh table
+    const row = document.getElementById("pin-reset-row-" + userId);
+    if (row) row.style.display = "none";
+    inp.value = "";
+    const r = await api("getUsers"); renderUsersTable(r.users);
+    showToast("PIN reset successfully ✓");
+  } catch(e) {
+    showToast("Error: " + e.message);
+  }
+  spin(false);
+}
+
+// ── Admin: approve a PIN reset request from requests tab ──
+async function approveResetRequest(id, userId) {
+  const newPin = prompt("Enter a new 4-digit PIN for this user:");
+  if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
+    showToast("Invalid PIN — must be 4 digits"); return;
+  }
+  spin(true);
+  try {
+    const pinHash = await sha256(newPin);
+    await api("resetUserPin", { id: userId, pinHash });
+    await api("deleteRequest", { id });
+    const [u, r] = await Promise.all([api("getUsers"), api("getRequests")]);
+    renderUsersTable(u.users);
+    renderRequestsTable(r.requests);
+    showToast("PIN reset and request cleared ✓ — tell user their new PIN: " + newPin);
+    setTimeout(() => alert("New PIN for user: " + newPin + "\nShare this with them securely."), 300);
+  } catch(e) {
+    showToast("Error: " + e.message);
+  }
+  spin(false);
 }
 
 </script>
