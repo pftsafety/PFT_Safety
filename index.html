@@ -669,41 +669,15 @@ input[type="email"] {
 }
 
 
+
 /* Iframe blocked fallback */
-.iframe-blocked {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  gap: 1rem;
-  padding: 2rem;
-  text-align: center;
-  background: linear-gradient(135deg,#0d1117,#1c2333);
-}
-.iframe-blocked.show { display: flex; }
-.ib-icon {
-  width: 64px; height: 64px; border-radius: 18px;
-  background: rgba(59,130,246,0.12);
-  border: 1px solid rgba(59,130,246,0.25);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
-}
-.ib-title { font-size: 16px; font-weight: 600; color: #fff; }
-.ib-sub {
-  font-size: 13px; color: rgba(255,255,255,0.4);
-  max-width: 320px; line-height: 1.6;
-}
-.ib-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(59,130,246,0.18);
-  border: 1px solid rgba(59,130,246,0.35);
-  border-radius: 10px; padding: 10px 20px;
-  font-size: 14px; font-weight: 500; color: #93c5fd;
-  cursor: pointer; font-family: var(--font);
-  transition: background .15s;
-}
-.ib-btn:hover { background: rgba(59,130,246,0.3); }
+.iframe-blocked{display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:1rem;padding:2rem;text-align:center;background:linear-gradient(135deg,#0d1117,#1c2333)}
+.iframe-blocked.show{display:flex}
+.ib-icon{width:56px;height:56px;border-radius:14px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);display:flex;align-items:center;justify-content:center;font-size:24px}
+.ib-title{font-size:15px;font-weight:600;color:#fff}
+.ib-sub{font-size:12px;color:rgba(255,255,255,0.4);max-width:300px;line-height:1.6}
+.ib-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;color:#93c5fd;cursor:pointer;font-family:var(--font);transition:background .15s}
+.ib-btn:hover{background:rgba(59,130,246,0.28)}
 
 </style>
 </head>
@@ -874,15 +848,15 @@ input[type="email"] {
           <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
           <div class="iframe-blocked" id="iframe-blocked">
             <div class="ib-icon">🔗</div>
-            <div class="ib-title">Cannot preview this site</div>
-            <div class="ib-sub">This site has restricted embedding. Open it directly in a new tab instead.</div>
+            <div class="ib-title">This site can&#39;t be previewed here</div>
+            <div class="ib-sub">The project blocked embedding via security headers. Open it in a new tab, or set up a Cloudflare proxy.</div>
             <button class="ib-btn" onclick="openExternal()">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               Open in new tab
             </button>
             <button class="ib-btn" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)" onclick="showProjects()">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-              Back to projects
+              Back
             </button>
           </div>
           <div class="iframe-notice" id="iframe-notice">Press Back to return to portal</div>
@@ -1327,7 +1301,6 @@ async function renderHome() {
 
 function showProjects() {
   // Clear iframe check timer
-  if (window._iframeTimer) { clearTimeout(window._iframeTimer); window._iframeTimer = null; }
   // Hide all content views
   document.getElementById("iframe-view").classList.remove("active");
   document.getElementById("safety-view").classList.remove("active");
@@ -1352,7 +1325,7 @@ let currentExtUrl = "";
 function openProject(id, encodedUrl) {
   const url = decodeURIComponent(encodedUrl);
   currentExtUrl = url;
-  const iframe = document.getElementById("portal-iframe");
+  const iframe  = document.getElementById("portal-iframe");
   const blocked = document.getElementById("iframe-blocked");
   const notice  = document.getElementById("iframe-notice");
   // Reset state
@@ -1365,27 +1338,8 @@ function openProject(id, encodedUrl) {
   document.getElementById("iframe-view").classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   document.getElementById("iframe-url-bar").textContent = url;
-  // Set iframe src directly
+  // Load the project — sandbox prevents frame-busting JS
   if (iframe) iframe.src = url;
-  // After 3s, if still blank → auto open in new tab
-  if (window._iframeTimer) clearTimeout(window._iframeTimer);
-  window._iframeTimer = setTimeout(() => {
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!doc || !doc.body || doc.body.innerHTML.trim() === "") {
-        window.open(url, "_blank");
-        if (blocked) blocked.classList.add("show");
-        if (iframe)  iframe.style.display = "none";
-        if (notice)  notice.style.display = "none";
-      }
-    } catch(e) {
-      // Cross-origin and blank = blocked
-      window.open(url, "_blank");
-      if (blocked) blocked.classList.add("show");
-      if (iframe)  iframe.style.display = "none";
-      if (notice)  notice.style.display = "none";
-    }
-  }, 3000);
 }
 function openExternal() { window.open(currentExtUrl, "_blank"); }
 
