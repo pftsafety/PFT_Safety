@@ -836,6 +836,67 @@ input[type="email"] {
   .forgot-overlay { border-radius: 0 0 20px 20px; padding: 1.75rem 1.25rem 1.5rem; }
 }
 
+
+/* ══ Force Change PIN screen ══ */
+#change-pin-screen {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.change-pin-card {
+  width: 380px;
+  max-width: calc(100vw - 2rem);
+  padding: 2.25rem 2rem 2rem;
+  display: flex; flex-direction: column; align-items: center;
+  animation: rise .4s cubic-bezier(.22,1,.36,1) both;
+  position: relative; overflow: hidden;
+}
+.change-pin-card::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+}
+.cpn-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(59,130,246,0.35), rgba(14,165,233,0.15));
+  border: 1.5px solid rgba(59,130,246,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2), 0 0 20px rgba(59,130,246,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 1rem;
+}
+.cpn-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.cpn-sub   { font-size: 12px; color: rgba(255,255,255,0.45); text-align: center; margin-bottom: 1.5rem; line-height: 1.6; max-width: 260px; }
+.cpn-banner {
+  width: 100%; background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 10px; padding: 9px 13px;
+  font-size: 12px; color: #fcd34d;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 1.25rem; line-height: 1.5;
+}
+.cpn-step-label {
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.35);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 8px; align-self: flex-start;
+}
+.cpn-dots { display: flex; gap: 12px; margin-bottom: 1rem; }
+.cpn-row  { display: flex; gap: 8px; width: 100%; margin-bottom: .5rem; }
+.cpn-box  {
+  flex: 1; min-width: 0; height: 48px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px; font-size: 20px; font-weight: 500;
+  color: #fff; text-align: center; font-family: var(--font);
+  outline: none; caret-color: transparent; padding: 0;
+  transition: border-color .15s, background .15s;
+}
+.cpn-box:focus { background: rgba(255,255,255,0.13); border-color: rgba(59,130,246,0.5); }
+.cpn-box.filled { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.28); }
+.cpn-err { font-size: 12px; color: #fca5a5; min-height: 16px; text-align: center; margin-top: 4px; }
+@media (max-width: 640px) {
+  .change-pin-card { padding: 1.75rem 1.25rem 1.5rem; }
+}
+
 </style>
 </head>
 <body>
@@ -993,6 +1054,36 @@ input[type="email"] {
     </div>
 
     </div><!-- end auth-right -->
+  </div>
+</div>
+
+<!-- ══════════ CHANGE PIN SCREEN ══════════ -->
+<div id="change-pin-screen" class="screen">
+  <div class="change-pin-card glass-deep">
+    <div class="cpn-icon">🔒</div>
+    <p class="cpn-title">Set a New PIN</p>
+    <p class="cpn-sub">Your admin has reset your PIN. You must choose a new one before continuing.</p>
+    <div class="cpn-banner">
+      <svg width="14" height="14" fill="none" stroke="#fcd34d" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      This is a one-time change. Your admin-given PIN will no longer work after this.
+    </div>
+    <p class="cpn-step-label">New 4-digit MPIN</p>
+    <div class="cpn-row">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-n0" oninput="cpnInput('n',0)" onkeydown="cpnKey(event,'n',0)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-n1" oninput="cpnInput('n',1)" onkeydown="cpnKey(event,'n',1)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-n2" oninput="cpnInput('n',2)" onkeydown="cpnKey(event,'n',2)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-n3" oninput="cpnInput('n',3)" onkeydown="cpnKey(event,'n',3)">
+    </div>
+    <p class="cpn-step-label" style="margin-top:.75rem">Confirm new MPIN</p>
+    <div class="cpn-row">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-c0" oninput="cpnInput('c',0)" onkeydown="cpnKey(event,'c',0)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-c1" oninput="cpnInput('c',1)" onkeydown="cpnKey(event,'c',1)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-c2" oninput="cpnInput('c',2)" onkeydown="cpnKey(event,'c',2)">
+      <input class="cpn-box" type="password" inputmode="numeric" maxlength="1" id="cpn-c3" oninput="cpnInput('c',3)" onkeydown="cpnKey(event,'c',3)">
+    </div>
+    <p class="cpn-err" id="cpn-err"></p>
+    <button class="submit-btn" style="margin-top:1rem;width:100%" onclick="submitChangePin()">Set New PIN &rarr;</button>
+    <p style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:.75rem;text-align:center">SHA-256 hashed &mdash; your PIN is never stored in plain text</p>
   </div>
 </div>
 
@@ -1302,7 +1393,13 @@ async function checkPin() {
       updateDots("success");
       currentUser = res.user;
       localStorage.setItem(REMEMBER_KEY, res.user.username || username);
-      setTimeout(async () => { showScreen("home-screen"); await renderHome(); spin(false); }, 300);
+      if (res.user.mustChangePin) {
+        // Force PIN change before entering portal
+        _oldPinHash = hash; // save admin-given hash for verification
+        setTimeout(() => { spin(false); cpnClear(); showScreen("change-pin-screen"); }, 300);
+      } else {
+        setTimeout(async () => { showScreen("home-screen"); await renderHome(); spin(false); }, 300);
+      }
     }
   } catch (err) {
     spin(false);
@@ -1417,7 +1514,8 @@ function showScreen(id) {
   document.getElementById(id).classList.add("active");
 }
 function logout() {
-  currentPin = ""; currentUser = null;
+  currentPin = ""; currentUser = null; _oldPinHash = "";
+  cpnClear();
   stopCardLiveCounter();
   if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; }
   document.getElementById("lockout-msg").textContent = "";
@@ -2162,6 +2260,72 @@ async function approveResetRequest(id, userId) {
   spin(false);
 }
 
+
+// ══════════════════════════════════════════════════
+//  FORCE CHANGE PIN
+// ══════════════════════════════════════════════════
+let _oldPinHash = ""; // stores the hash of the admin-given PIN temporarily
+
+// PIN box input handlers
+function cpnInput(prefix, i) {
+  const el = document.getElementById("cpn-" + prefix + i);
+  const v  = el.value.replace(/\D/g, "");
+  el.value = v;
+  el.classList.toggle("filled", v !== "");
+  if (v && i < 3) document.getElementById("cpn-" + prefix + (i+1)).focus();
+}
+function cpnKey(e, prefix, i) {
+  if (e.key === "Backspace" && !document.getElementById("cpn-" + prefix + i).value && i > 0)
+    document.getElementById("cpn-" + prefix + (i-1)).focus();
+}
+function cpnGetPin(prefix) {
+  return [0,1,2,3].map(i => document.getElementById("cpn-" + prefix + i).value).join("");
+}
+function cpnClear() {
+  ["n","c"].forEach(p => [0,1,2,3].forEach(i => {
+    const el = document.getElementById("cpn-" + p + i);
+    if (el) { el.value = ""; el.classList.remove("filled"); }
+  }));
+  document.getElementById("cpn-err").textContent = "";
+  _oldPinHash = "";
+}
+
+async function submitChangePin() {
+  const newPin  = cpnGetPin("n");
+  const confPin = cpnGetPin("c");
+  const errEl   = document.getElementById("cpn-err");
+  errEl.textContent = "";
+
+  if (newPin.length !== 4)  { errEl.textContent = "Please enter a complete 4-digit PIN."; return; }
+  if (newPin !== confPin)   { errEl.textContent = "PINs do not match. Try again."; return; }
+  if (!_oldPinHash)         { errEl.textContent = "Session expired. Please sign in again."; return; }
+
+  // Check new PIN is different from old
+  const newHash = await sha256(newPin);
+  if (newHash === _oldPinHash) {
+    errEl.textContent = "New PIN must be different from the admin-given PIN.";
+    return;
+  }
+
+  spin(true);
+  try {
+    await api("changePin", {
+      username:   currentUser.username,
+      oldPinHash: _oldPinHash,
+      newPinHash: newHash
+    });
+    spin(false);
+    showToast("PIN changed successfully ✓");
+    cpnClear();
+    // Now go to home screen
+    showScreen("home-screen");
+    renderHome();
+  } catch(e) {
+    spin(false);
+    const msgs = { wrong_pin: "Session mismatch — please sign in again.", user_not_found: "User not found." };
+    errEl.textContent = msgs[e.message] || "Error: " + e.message;
+  }
+}
 </script>
 </body>
 </html>
