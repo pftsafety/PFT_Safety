@@ -814,33 +814,6 @@ input[type="email"] {
 .pin-reset-hint{font-size:11px;color:rgba(255,255,255,0.3)}
 
 
-/* ── Forgot PIN overlay (sits over auth-right content) ── */
-.forgot-overlay {
-  display: none;
-  position: absolute;
-  inset: 0;
-  /* Solid glass background — covers the login form beneath */
-  background: rgba(13, 17, 23, 0.96);
-  backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-  border-radius: 0 26px 26px 0;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem 2.25rem 2rem;
-  overflow-y: auto;
-  z-index: 20;
-  animation: rise .25s cubic-bezier(.22,1,.36,1) both;
-  border-left: 1px solid rgba(255,255,255,0.08);
-}
-.forgot-overlay.show { display: flex; }
-.auth-right { position: relative; overflow: hidden; }
-@media (max-width: 640px) {
-  .forgot-overlay {
-    border-radius: 0 0 20px 20px;
-    padding: 1.75rem 1.25rem 1.5rem;
-    border-left: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
 }
 
 
@@ -952,66 +925,71 @@ input[type="email"] {
 
     <!-- SIGN IN -->
     <div class="auth-panel active" id="panel-signin">
-      <div class="lock-avatar">🔐</div>
-      <p class="lock-title" id="portal-title-display">My Portal</p>
-      <p class="lock-sub" id="lock-subtitle">Sign in with your username and MPIN</p>
-      <div class="remembered-chip" id="remembered-chip" style="display:none">
-        <div class="ru-info">
-          <div class="ru-avatar" id="remembered-avatar">U</div>
-          <span class="ru-name" id="remembered-name">username</span>
-        </div>
-        <span class="ru-switch" onclick="forgetUsername()">Switch user</span>
-      </div>
-      <div class="field" id="signin-username-field" style="margin-bottom:1.1rem">
-        <label class="field-label">Username</label>
-        <input class="field-input" id="si-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
-      </div>
-      <div class="pin-dots" id="dots">
-        <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
-        <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
-      </div>
-      <div class="keypad">
-        <button class="key" onclick="pressKey('1')">1</button><button class="key" onclick="pressKey('2')">2</button><button class="key" onclick="pressKey('3')">3</button>
-        <button class="key" onclick="pressKey('4')">4</button><button class="key" onclick="pressKey('5')">5</button><button class="key" onclick="pressKey('6')">6</button>
-        <button class="key" onclick="pressKey('7')">7</button><button class="key" onclick="pressKey('8')">8</button><button class="key" onclick="pressKey('9')">9</button>
-        <button class="key action" onclick="clearPin()">Clear</button>
-        <button class="key" onclick="pressKey('0')">0</button>
-        <button class="key action" onclick="backspace()">
-          <svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
-        </button>
-      </div>
-      <p class="lock-err" id="err-msg"></p>
-      <p class="lock-err" id="lockout-msg" style="color:#fbbf24"></p>
-      <p class="admin-toggle" id="admin-toggle" onclick="toggleAdminMode()">Sign in as admin</p>
-      <p class="admin-toggle" style="margin-top:6px" onclick="showForgotPin()">Forgot PIN?</p>
-    </div>
 
-    <!-- Forgot PIN overlay inside auth-right -->
-    <div class="forgot-overlay" id="forgot-overlay">
-      <button class="forgot-back" onclick="hideForgotPin()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        Back to Sign In
-      </button>
-      <div id="forgot-form-inner" style="width:100%">
-        <div style="text-align:center;margin-bottom:1.25rem">
-          <div class="lock-avatar" style="margin:0 auto .75rem;font-size:22px">🔑</div>
-          <p class="lock-title" style="font-size:17px">Reset your PIN</p>
-          <p class="lock-sub" style="margin-bottom:0">Enter your username — admin will set a new PIN and share it with you</p>
+      <!-- ── Login form (default view) ── -->
+      <div id="signin-main" style="width:100%;display:flex;flex-direction:column;align-items:center">
+        <div class="lock-avatar">🔐</div>
+        <p class="lock-title" id="portal-title-display">My Portal</p>
+        <p class="lock-sub" id="lock-subtitle">Sign in with your username and MPIN</p>
+        <div class="remembered-chip" id="remembered-chip" style="display:none">
+          <div class="ru-info">
+            <div class="ru-avatar" id="remembered-avatar">U</div>
+            <span class="ru-name" id="remembered-name">username</span>
+          </div>
+          <span class="ru-switch" onclick="forgetUsername()">Switch user</span>
         </div>
-        <div class="field">
+        <div class="field" id="signin-username-field" style="margin-bottom:1.1rem">
+          <label class="field-label">Username</label>
+          <input class="field-input" id="si-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="pin-dots" id="dots">
+          <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+          <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+        </div>
+        <div class="keypad">
+          <button class="key" onclick="pressKey('1')">1</button><button class="key" onclick="pressKey('2')">2</button><button class="key" onclick="pressKey('3')">3</button>
+          <button class="key" onclick="pressKey('4')">4</button><button class="key" onclick="pressKey('5')">5</button><button class="key" onclick="pressKey('6')">6</button>
+          <button class="key" onclick="pressKey('7')">7</button><button class="key" onclick="pressKey('8')">8</button><button class="key" onclick="pressKey('9')">9</button>
+          <button class="key action" onclick="clearPin()">Clear</button>
+          <button class="key" onclick="pressKey('0')">0</button>
+          <button class="key action" onclick="backspace()">
+            <svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
+          </button>
+        </div>
+        <p class="lock-err" id="err-msg"></p>
+        <p class="lock-err" id="lockout-msg" style="color:#fbbf24"></p>
+        <p class="admin-toggle" id="admin-toggle" onclick="toggleAdminMode()">Sign in as admin</p>
+        <p class="admin-toggle" style="margin-top:6px" onclick="showForgotPin()">Forgot PIN?</p>
+      </div>
+
+      <!-- ── Forgot PIN form (hidden by default, shown in place of login) ── -->
+      <div id="forgot-form-wrap" style="width:100%;display:none;flex-direction:column;align-items:center">
+        <div class="lock-avatar" style="font-size:22px">🔑</div>
+        <p class="lock-title" style="font-size:17px">Reset your PIN</p>
+        <p class="lock-sub">Enter your username — admin will set a new PIN and share it with you</p>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);width:100%;margin:.5rem 0 1rem"></div>
+        <div class="field" style="width:100%">
           <label class="field-label">Username</label>
           <input class="field-input" id="fp-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
         </div>
-        <button class="submit-btn" onclick="submitForgotPin()">Request PIN Reset</button>
+        <button class="submit-btn" onclick="submitForgotPin()" style="width:100%">Request PIN Reset</button>
         <p class="signup-err" id="fp-err" style="margin-top:8px"></p>
+        <button class="admin-toggle" style="margin-top:1rem;border:none;background:none;cursor:pointer;font-family:var(--font);color:rgba(255,255,255,0.38)" onclick="hideForgotPin()">
+          ← Back to Sign In
+        </button>
       </div>
-      <div class="signup-success" id="fp-success" style="display:none">
+
+      <!-- ── Forgot success ── -->
+      <div id="fp-success" style="width:100%;display:none;flex-direction:column;align-items:center;gap:10px;text-align:center">
         <div class="success-icon">✅</div>
         <p class="success-title">Request sent!</p>
         <p class="success-sub">The admin will reset your PIN and share the new one with you.</p>
         <button class="submit-btn" style="max-width:200px;margin-top:.25rem" onclick="hideForgotPin()">Back to Sign In</button>
       </div>
+
     </div>
+
+
 
     <!-- SIGN UP -->
     <div class="auth-panel" id="panel-signup">
@@ -1342,7 +1320,17 @@ function switchAuthTab(tab) {
     document.getElementById("tab-"    + t).classList.toggle("active", t === tab);
     document.getElementById("panel-" + t).classList.toggle("active", t === tab);
   });
-  if (tab === "signin") { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; if(adminMode) { adminMode=false; resetAdminUI(); } }
+  if (tab === "signin") {
+    currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = "";
+    if(adminMode) { adminMode=false; resetAdminUI(); }
+    // Ensure forgot form is hidden
+    const fw = document.getElementById("forgot-form-wrap");
+    const fs = document.getElementById("fp-success");
+    const sm = document.getElementById("signin-main");
+    if (fw) fw.style.display = "none";
+    if (fs) fs.style.display = "none";
+    if (sm) sm.style.display = "flex";
+  }
   if (tab === "signup") resetSignupForm();
 }
 
@@ -2159,22 +2147,21 @@ function animateSafetyCounter(el, from, to, dur) {
 //  FORGOT PIN / RESET PIN
 // ══════════════════════════════════════════════════
 
-// ── Sign-in screen navigation ──
+// ── Forgot PIN toggle (swap between login form and forgot form in-place) ──
 function showForgotPin() {
-  const overlay = document.getElementById("forgot-overlay");
-  if (!overlay) return;
-  // Reset form state
-  document.getElementById("fp-username").value = "";
+  document.getElementById("signin-main").style.display = "none";
+  document.getElementById("fp-success").style.display  = "none";
   document.getElementById("fp-err").textContent = "";
-  document.getElementById("forgot-form-inner").style.display = "";
-  document.getElementById("fp-success").style.display = "none";
-  overlay.classList.add("show");
-  setTimeout(() => document.getElementById("fp-username").focus(), 50);
+  document.getElementById("fp-username").value  = "";
+  const fw = document.getElementById("forgot-form-wrap");
+  fw.style.display = "flex";
+  setTimeout(() => document.getElementById("fp-username").focus(), 60);
 }
 
 function hideForgotPin() {
-  const overlay = document.getElementById("forgot-overlay");
-  if (overlay) overlay.classList.remove("show");
+  document.getElementById("forgot-form-wrap").style.display = "none";
+  document.getElementById("fp-success").style.display       = "none";
+  document.getElementById("signin-main").style.display      = "flex";
 }
 
 function showSignIn() {
@@ -2198,7 +2185,7 @@ async function submitForgotPin() {
       return;
     }
     // Show success
-    document.getElementById("forgot-form-inner").style.display = "none";
+    document.getElementById("forgot-form-wrap").style.display = "none";
     document.getElementById("fp-success").style.display = "flex";
   } catch(e) {
     spin(false);
