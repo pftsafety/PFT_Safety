@@ -181,46 +181,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
 .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ─── Home ─── */
-#home-screen{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;inset:0}
-.portal-shell{display:flex;flex-direction:column;height:100vh;width:100%}
-.topbar{height:52px;background:rgba(255,255,255,0.1);backdrop-filter:var(--blur-light);-webkit-backdrop-filter:var(--blur-light);border-bottom:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;flex-shrink:0;z-index:50;box-shadow:0 1px 0 rgba(255,255,255,0.12) inset}
-.topbar-logo{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px;flex:1}
-.topbar-logo span{opacity:.5;font-weight:300}
-.topbar-btn{height:30px;padding:0 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);border-radius:8px;color:rgba(255,255,255,0.8);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font);white-space:nowrap}
-.topbar-btn:hover{background:rgba(255,255,255,0.2)}
-.topbar-user-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:4px 12px 4px 6px}
-.user-dot{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#0ea5e9);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff}
-.user-name{font-size:12px;color:rgba(255,255,255,0.8)}
-.portal-body{display:flex;flex:1;overflow:hidden}
-.sidebar{width:220px;flex-shrink:0;background:rgba(255,255,255,0.07);backdrop-filter:var(--blur-light);-webkit-backdrop-filter:var(--blur-light);border-right:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;padding:1rem .75rem;gap:4px;overflow-y:auto}
-.sidebar-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;padding:8px 8px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,0.65);font-size:13px;border:1px solid transparent}
-.nav-item:hover{background:rgba(255,255,255,0.1);color:#fff}
-.nav-item.active{background:rgba(59,130,246,0.15);border-color:rgba(59,130,246,0.3);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.15) inset}
-.nav-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.08)}
-.nav-item.active .nav-icon{background:rgba(255,255,255,0.18)}
-.nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#projects-view{flex:1;overflow-y:auto;padding:1.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;align-content:start}
-.proj-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.22);border-radius:18px;padding:1.2rem 1.1rem;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.3) inset;animation:cardIn .4s cubic-bezier(.22,1,.36,1) both;position:relative;overflow:hidden}
-.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.6),transparent)}
-.proj-card:hover{transform:translateY(-4px) scale(1.02);background:rgba(59,130,246,0.1);box-shadow:0 12px 32px rgba(0,0,0,0.25),0 1px 0 rgba(255,255,255,0.25) inset;border-color:rgba(59,130,246,0.35)}
-@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.proj-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
-.proj-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;letter-spacing:-.1px}
-.proj-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.45}
-.proj-cta{font-size:11px;color:rgba(255,255,255,0.35);margin-top:10px;display:flex;align-items:center;gap:4px}
-#iframe-view{flex:1;display:none;flex-direction:column;background:#fff;position:relative}
-#iframe-view.active{display:flex}
-.iframe-bar{height:44px;flex-shrink:0;background:rgba(15,12,41,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px;padding:0 1rem}
-.iframe-back{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.6);font-size:13px;cursor:pointer;padding:4px 8px;border-radius:7px;transition:all .15s;border:1px solid transparent}
-.iframe-back:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:#fff}
-.iframe-url{flex:1;font-size:12px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:4px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.iframe-title{flex:1;font-size:13px;font-weight:500;color:rgba(255,255,255,0.7);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.1px}
-#portal-iframe{flex:1;border:none;width:100%}
-
-
 /* ─── Admin ─── */
 #admin-screen{flex-direction:column;align-items:stretch;justify-content:flex-start}
 .admin-shell{display:flex;flex-direction:column;width:100%;height:100vh}
@@ -877,6 +837,240 @@ input[type="email"] {
   .change-pin-card { padding: 1.75rem 1.25rem 1.5rem; }
 }
 
+
+/* ════════════════════════════════════════
+   APP LAUNCHER — redesigned home screen
+════════════════════════════════════════ */
+
+/* Shell */
+#home-screen { flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 0; inset: 0; }
+.app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; overflow: hidden; }
+
+/* Header */
+.app-header {
+  height: 54px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.25rem;
+  background: rgba(13,17,23,0.7);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  z-index: 50;
+}
+@media (display-mode: standalone) {
+  .app-header { padding-top: env(safe-area-inset-top); height: calc(54px + env(safe-area-inset-top)); }
+}
+.ah-left { display: flex; align-items: center; gap: 10px; }
+.ah-logo { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.2px; }
+.ah-right { display: flex; align-items: center; gap: 10px; }
+.ah-user {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 3px 10px 3px 4px;
+}
+.ah-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(135deg,#1d4ed8,#0ea5e9);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+}
+.ah-name { font-size: 12px; color: rgba(255,255,255,0.7); }
+.ah-lock {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s;
+}
+.ah-lock:hover { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.25); color: #fca5a5; }
+
+/* Views */
+.app-views { flex: 1; position: relative; overflow: hidden; }
+.app-view { position: absolute; inset: 0; display: none; flex-direction: column; }
+.app-view.active { display: flex; }
+
+/* ── LAUNCHER ── */
+#launcher-view { background: transparent; }
+#launcher-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 1.5rem 1.25rem 2rem;
+}
+#launcher-scroll::-webkit-scrollbar { width: 3px; }
+#launcher-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+#launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+/* Safety hero — spans full width */
+.safety-hero-card {
+  grid-column: 1 / -1;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(135deg, #0d1117 0%, #1e2a45 60%, #1c2333 100%);
+  cursor: pointer;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.08) inset;
+  display: flex; align-items: stretch;
+  min-height: 110px;
+  position: relative;
+}
+.safety-hero-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(-45deg,transparent,transparent 14px,rgba(252,211,77,0.03) 14px,rgba(252,211,77,0.03) 16px);
+  pointer-events: none;
+}
+.safety-hero-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
+.shc-left { flex: 1; padding: 1rem 1.25rem; display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
+.shc-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(252,211,77,0.12); border: 1px solid rgba(252,211,77,0.25);
+  border-radius: 5px; padding: 2px 8px;
+  font-size: 10px; font-weight: 700; color: #fcd34d;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  width: fit-content; margin-bottom: .4rem;
+}
+.shc-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #fcd34d; animation: pulse 1.5s ease infinite; }
+.shc-title { font-size: 11px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.8px; }
+.shc-number { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; color: #fff; line-height: 1; letter-spacing: -1px; }
+.shc-number sup { font-size: 40%; vertical-align: super; opacity: 0.55; }
+.shc-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+.shc-right {
+  width: 140px; flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; z-index: 1;
+}
+.shc-stat { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: .4rem .75rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.shc-stat:last-child { border-bottom: none; }
+.shc-stat-v { font-size: clamp(.8rem,2.2vw,1.1rem); font-weight: 700; color: #fff; line-height: 1; }
+.shc-stat-v.green { color: #34d399; }
+.shc-stat-l { font-size: 9px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: .6px; margin-top: 2px; }
+
+/* Project app-icon cards */
+.app-card {
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), background .15s, box-shadow .2s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.08) inset;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 1.1rem .75rem .9rem;
+  gap: .6rem;
+  animation: cardIn .35s cubic-bezier(.22,1,.36,1) both;
+  position: relative; overflow: hidden;
+}
+.app-card::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }
+.app-card:hover { transform: translateY(-3px) scale(1.03); background: rgba(255,255,255,0.12); box-shadow: 0 10px 28px rgba(0,0,0,0.25); }
+.app-card:active { transform: scale(0.95); }
+
+.ac-icon {
+  width: 58px; height: 58px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+.ac-name {
+  font-size: 12px; font-weight: 600; color: #fff;
+  text-align: center; line-height: 1.35;
+  word-break: break-word; max-width: 100%;
+}
+.ac-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #34d399;
+  border: 1.5px solid rgba(13,17,23,0.8);
+}
+
+/* Section label */
+.launcher-section-label {
+  grid-column: 1 / -1;
+  font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: .5rem 0 .25rem;
+}
+
+/* ── WEBVIEW ── */
+#webview-view { background: #fff; }
+.wv-bar {
+  height: 48px; flex-shrink: 0;
+  background: rgba(13,17,23,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; padding: 0 .75rem; gap: 8px;
+  z-index: 10;
+}
+@media (display-mode: standalone) {
+  .wv-bar { padding-top: env(safe-area-inset-top); height: calc(48px + env(safe-area-inset-top)); }
+}
+.wv-back {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .12s; flex-shrink: 0;
+}
+.wv-back:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.wv-title { flex: 1; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.65); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wv-newtab {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.45);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .12s; flex-shrink: 0;
+}
+.wv-newtab:hover { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3); color: #93c5fd; }
+#portal-iframe { flex: 1; border: none; width: 100%; display: block; }
+
+/* Webview blocked fallback */
+.wv-blocked {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1; gap: .9rem; padding: 2rem; text-align: center;
+  background: linear-gradient(135deg,#0d1117,#1c2333);
+}
+.wv-blocked.show { display: flex; }
+.wvb-icon { font-size: 36px; }
+.wvb-title { font-size: 15px; font-weight: 600; color: #fff; }
+.wvb-sub { font-size: 12px; color: rgba(255,255,255,0.4); max-width: 280px; line-height: 1.6; }
+.wvb-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 9px; padding: 9px 20px;
+  font-size: 13px; font-weight: 500; color: #93c5fd;
+  cursor: pointer; font-family: var(--font); transition: background .15s;
+}
+.wvb-btn:hover { background: rgba(59,130,246,0.28); }
+.wvb-ghost { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.45); }
+.wvb-ghost:hover { background: rgba(255,255,255,0.1); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  #launcher-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ac-icon { width: 50px; height: 50px; font-size: 22px; border-radius: 12px; }
+  .ac-name { font-size: 11px; }
+  .shc-right { width: 110px; }
+  #launcher-scroll { padding: 1rem .875rem 1.5rem; }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+  #launcher-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 769px) {
+  #launcher-grid { grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  #launcher-scroll { padding: 2rem 2rem 2rem; }
+  .ac-icon { width: 64px; height: 64px; font-size: 28px; }
+  .ac-name { font-size: 13px; }
+}
+
 </style>
 </head>
 <body>
@@ -1074,96 +1268,99 @@ input[type="email"] {
 
 <!-- ══════════ HOME ══════════ -->
 <div id="home-screen" class="screen">
-  <div class="portal-shell">
-    <div class="topbar">
-      <div class="topbar-logo" id="topbar-logo">My Portal <span>/ Projects</span></div>
-      <div class="topbar-user-chip">
-        <div class="user-dot" id="topbar-initials">U</div>
-        <span class="user-name" id="topbar-name">User</span>
-      </div>
-      <button class="topbar-btn" onclick="logout()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Lock
-      </button>
-    </div>
-    <div class="portal-body">
-      <div class="sidebar">
-        <div class="sidebar-label">Projects</div>
-        <div class="nav-item active" onclick="showProjects()">
-          <div class="nav-icon">🗂️</div><span class="nav-label">All Projects</span>
-        </div>
-        <div id="sidebar-projects"></div>
-      </div>
-      <div class="main-area">
-        <div id="projects-view"></div>
-        <div id="iframe-view">
-          <div class="iframe-bar">
-            <div class="iframe-back" onclick="showProjects()">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Back
-            </div>
-            <div class="iframe-title" id="iframe-url-bar"></div>
-            <button class="topbar-btn" onclick="openExternal()">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>New tab
-            </button>
-          </div>
-          <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
-          <div class="iframe-blocked" id="iframe-blocked">
-            <div class="ib-icon">🔗</div>
-            <div class="ib-title">This site can&#39;t be previewed here</div>
-            <div class="ib-sub">The project blocked embedding via security headers. Open it in a new tab, or set up a Cloudflare proxy.</div>
-            <button class="ib-btn" onclick="openExternal()">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              Open in new tab
-            </button>
-            <button class="ib-btn" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)" onclick="showProjects()">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-              Back
-            </button>
-          </div>
-        </div>
+  <div class="app-shell">
 
-        <!-- Safety full-screen view -->
-        <div id="safety-view">
-          <div class="sv-topbar">
-            <div class="sv-back" onclick="showProjects()">
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-              Back
-            </div>
-            <div class="sv-title">Safety &amp; Environment Dashboard</div>
-          </div>
-          <div class="sv-hazard"></div>
-          <div class="sv-body">
-            <div class="sv-orb sv-orb1"></div>
-            <div class="sv-orb sv-orb2"></div>
-            <div class="sv-dept">
-              <div class="sv-dept-name">Safety &amp; Environment Department</div>
-              <div class="sv-dept-sub">HLL Lifecare Ltd &middot; Peroorkada Factory</div>
-            </div>
-            <div class="sv-counter-wrap">
-              <div class="sv-counter-label">Accident Free Manhours Continuously Worked</div>
-              <div class="sv-counter-number" id="sv-manhours">0</div>
-              <div class="sv-counter-unit">Manhours &middot; Cumulative Total</div>
-            </div>
-            <div class="sv-stats">
-              <div class="sv-stat-box">
-                <div class="sv-stat-val" id="sv-incident-date">--</div>
-                <div class="sv-stat-lbl">Last Incident</div>
-              </div>
-              <div class="sv-stat-box">
-                <div class="sv-stat-val">1,500</div>
-                <div class="sv-stat-lbl">Total Workforce</div>
-              </div>
-              <div class="sv-stat-box">
-                <div class="sv-stat-val accent" id="sv-days">0</div>
-                <div class="sv-stat-lbl">Safe Days</div>
-              </div>
-            </div>
-          </div>
+    <!-- ── App header ── -->
+    <div class="app-header" id="app-header">
+      <div class="ah-left">
+        <div class="ah-logo" id="topbar-logo">My Portal</div>
+      </div>
+      <div class="ah-right">
+        <div class="ah-user">
+          <div class="ah-avatar" id="topbar-initials">U</div>
+          <span class="ah-name" id="topbar-name">User</span>
         </div>
-
+        <button class="ah-lock" onclick="logout()" title="Lock">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </button>
       </div>
     </div>
-  </div>
+
+    <!-- ── Views container ── -->
+    <div class="app-views">
+
+      <!-- LAUNCHER -->
+      <div id="launcher-view" class="app-view active">
+        <div id="launcher-scroll">
+          <div id="launcher-grid"></div>
+        </div>
+      </div>
+
+      <!-- WEBVIEW (iframe project) -->
+      <div id="webview-view" class="app-view">
+        <div class="wv-bar" id="wv-bar">
+          <button class="wv-back" onclick="showLauncher()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="wv-title" id="wv-title">Project</span>
+          <button class="wv-newtab" onclick="openExternal()" title="Open in new tab">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </button>
+        </div>
+        <iframe id="portal-iframe" src="about:blank" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+        <div class="wv-blocked" id="wv-blocked">
+          <div class="wvb-icon">🔗</div>
+          <p class="wvb-title">Cannot embed this site</p>
+          <p class="wvb-sub">This project blocked embedding. Open it in your browser instead.</p>
+          <button class="wvb-btn" onclick="openExternal()">Open in browser</button>
+          <button class="wvb-btn wvb-ghost" onclick="showLauncher()">Back to launcher</button>
+        </div>
+      </div>
+
+      <!-- SAFETY FULL VIEW -->
+      <div id="safety-view" class="app-view">
+        <div class="sv-topbar">
+          <div class="sv-back" onclick="showLauncher()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </div>
+          <div class="sv-title">Safety &amp; Environment Dashboard</div>
+        </div>
+        <div class="sv-hazard"></div>
+        <div class="sv-body">
+          <div class="sv-orb sv-orb1"></div>
+          <div class="sv-orb sv-orb2"></div>
+          <div class="sv-dept">
+            <div class="sv-dept-name">Safety &amp; Environment Department</div>
+            <div class="sv-dept-sub">HLL Lifecare Ltd &middot; Peroorkada Factory</div>
+          </div>
+          <div class="sv-counter-wrap">
+            <div class="sv-counter-label">Accident Free Manhours Continuously Worked</div>
+            <div class="sv-counter-number" id="sv-manhours">0</div>
+            <div class="sv-counter-unit">Manhours &middot; Cumulative Total</div>
+          </div>
+          <div class="sv-stats">
+            <div class="sv-stat-box">
+              <div class="sv-stat-val" id="sv-incident-date">--</div>
+              <div class="sv-stat-lbl">Last Incident</div>
+            </div>
+            <div class="sv-stat-box">
+              <div class="sv-stat-val">1,500</div>
+              <div class="sv-stat-lbl">Total Workforce</div>
+            </div>
+            <div class="sv-stat-box">
+              <div class="sv-stat-val accent" id="sv-days">0</div>
+              <div class="sv-stat-lbl">Safe Days</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end app-views -->
+  </div><!-- end app-shell -->
 </div>
 
 <!-- ══════════ ADMIN ══════════ -->
@@ -1517,128 +1714,117 @@ function logout() {
   document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
   document.getElementById("si-username").value = "";
   resetAdminUI(); updateDots();
-  document.getElementById("portal-iframe").src = "about:blank";
+  const _iframe = document.getElementById("portal-iframe");
+  if (_iframe) _iframe.src = "about:blank";
+  document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
   switchAuthTab("signin");
   showScreen("lock-screen");
 }
 
 // ─── Home ─────────────────────────────────────────
 async function renderHome() {
-  const grid = document.getElementById("projects-view");
-  grid.innerHTML = `<div style="color:rgba(255,255,255,0.4);font-size:13px;grid-column:1/-1;padding-top:2rem;text-align:center">Loading projects…</div>`;
-
-  // Set user info immediately from currentUser — no need to wait for settings
   const name = currentUser ? currentUser.name : "User";
   document.getElementById("topbar-name").textContent     = name;
   document.getElementById("topbar-initials").textContent = name.slice(0,1).toUpperCase();
 
-  // Load settings in background (non-blocking — just updates portal name)
+  // Load settings in background
   api("getSettings").then(s => {
-    document.getElementById("topbar-logo").innerHTML = `${s.portalName||"My Portal"} <span>/ Projects</span>`;
+    document.getElementById("topbar-logo").textContent = s.portalName || "My Portal";
   }).catch(() => {});
 
-  // Load projects (main content)
+  // Load projects
+  const grid = document.getElementById("launcher-grid");
+  grid.innerHTML = `<div class="launcher-section-label">Safety</div>${buildSafetyCard()}<div class="launcher-section-label">Projects</div>`;
+
   try {
-    const projRes  = await api("getProjects");
-    const projects = projRes.projects || [];
-
-    window._currentProjects = projects; // cache for name lookup in openProject
-    document.getElementById("sidebar-projects").innerHTML = projects.map(p => {
-      const safeUrl = encodeURIComponent(p.url);
-      return `<div class="nav-item" onclick="openProject('${p.id}','${safeUrl}')">
-        <div class="nav-icon">${p.icon||'📁'}</div>
-        <span class="nav-label">${p.name}</span>
-      </div>`;
-    }).join("");
-
-    const safetyCard = buildSafetyCard();
-
-    if (!projects.length) {
-      grid.innerHTML = safetyCard + `<div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;padding-top:1rem;text-align:center">No projects yet. Ask your admin to add some.</div>`;
-    } else {
-      grid.innerHTML = safetyCard + projects.map((p,i) => {
-        const safeUrl = encodeURIComponent(p.url);
-        const safeName = p.name.replace(/'/g,"&#39;");
-        return `<div class="proj-card" onclick="openProject('${p.id}','${safeUrl}')" style="animation-delay:${i*.05}s">
-          <div class="proj-icon" style="background:${p.bg||'rgba(255,255,255,0.1)'}">${p.icon||'📁'}</div>
-          <div class="proj-name">${safeName}</div>
-          <div class="proj-desc">${p.desc||''}</div>
-          <div class="proj-cta">
-            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>Open project
-          </div>
-        </div>`;
-      }).join("");
-    }
-    showProjects();
-    // Start live counter on the safety card (needs DOM to exist first)
+    const r = await api("getProjects");
+    window._currentProjects = r.projects || [];
+    renderLauncherGrid(window._currentProjects);
     requestAnimationFrame(() => startCardLiveCounter());
   } catch(e) {
-    grid.innerHTML = `<div style="color:#fca5a5;font-size:13px;grid-column:1/-1;padding-top:2rem;text-align:center">⚠️ Failed to load projects: ${e.message}</div>`;
+    grid.innerHTML += `<p style="color:rgba(255,255,255,0.3);font-size:13px;grid-column:1/-1">Failed to load projects: ${e.message}</p>`;
   }
+  showLauncher();
 }
 
-function showProjects() {
-  // Clear iframe check timer
-  // Hide all content views
-  document.getElementById("iframe-view").classList.remove("active");
-  document.getElementById("safety-view").classList.remove("active");
-  document.getElementById("projects-view").style.display = "grid";
+function renderLauncherGrid(projects) {
+  const grid = document.getElementById("launcher-grid");
+  // Remove old project cards (keep safety + label)
+  const existingCards = grid.querySelectorAll(".app-card");
+  existingCards.forEach(c => c.remove());
+  const noProj = grid.querySelector(".no-proj-msg");
+  if (noProj) noProj.remove();
+
+  if (!projects.length) {
+    grid.insertAdjacentHTML("beforeend", `<p class="no-proj-msg" style="color:rgba(255,255,255,0.3);font-size:13px;grid-column:1/-1">No projects yet — add them in the admin panel.</p>`);
+    return;
+  }
+  const fragment = projects.map((p, i) => {
+    const safeUrl = encodeURIComponent(p.url);
+    const safeName = p.name.replace(/'/g, "&#39;");
+    return `<div class="app-card" onclick="openProject('${p.id}','${safeUrl}')" style="animation-delay:${i*.04}s">
+      <div class="ac-icon" style="background:${p.bg||'rgba(255,255,255,0.1)'}">${p.icon||'📁'}</div>
+      <div class="ac-name">${safeName}</div>
+    </div>`;
+  }).join("");
+  grid.insertAdjacentHTML("beforeend", fragment);
+}
+
+function showLauncher() {
+  if (window._iframeTimer) { clearTimeout(window._iframeTimer); window._iframeTimer = null; }
+  // Stop timers
+  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
   // Reset iframe
   const iframe = document.getElementById("portal-iframe");
   if (iframe) iframe.src = "about:blank";
   // Reset blocked state
-  const blocked = document.getElementById("iframe-blocked");
-  const notice  = document.getElementById("iframe-notice");
-  if (blocked) blocked.classList.remove("show");
-  if (notice)  notice.style.display = "";
-  // Stop safety full-view timer, restart card counter
-  if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
+  const blocked = document.getElementById("wv-blocked");
+  if (blocked) { blocked.classList.remove("show"); }
+  if (iframe) iframe.style.display = "block";
+  // Switch views
+  document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
+  document.getElementById("launcher-view").classList.add("active");
+  // Restart safety card counter
   requestAnimationFrame(() => startCardLiveCounter());
-  // Nav
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.querySelector(".sidebar .nav-item:first-of-type")?.classList.add("active");
 }
 
-let currentExtUrl = "";
+// Keep showProjects as alias (used in safety view back button)
+function showProjects() { showLauncher(); }
+
 function openProject(id, encodedUrl) {
   const url = decodeURIComponent(encodedUrl);
   currentExtUrl = url;
   const iframe  = document.getElementById("portal-iframe");
-  const blocked = document.getElementById("iframe-blocked");
-  const notice  = document.getElementById("iframe-notice");
-  // Reset state
+  const blocked = document.getElementById("wv-blocked");
+  // Stop card counter
+  stopCardLiveCounter();
+  // Reset
   if (blocked) blocked.classList.remove("show");
-  if (notice)  notice.style.display = "";
-  if (iframe)  iframe.style.display = "block";
-  // Show iframe view
-  document.getElementById("projects-view").style.display = "none";
-  document.getElementById("safety-view").classList.remove("active");
-  document.getElementById("iframe-view").classList.add("active");
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  // Show project name in bar (not raw URL)
-  const proj = (window._currentProjects||[]).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
-  document.getElementById("iframe-url-bar").textContent = proj ? proj.name : "Project";
-  // Load the project — sandbox prevents frame-busting JS
-  if (iframe) iframe.src = url;
+  if (iframe)  { iframe.style.display = "block"; iframe.src = url; }
+  // Set title
+  const proj = (window._currentProjects || []).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
+  document.getElementById("wv-title").textContent = proj ? proj.name : "Project";
+  // Switch to webview
+  document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
+  document.getElementById("webview-view").classList.add("active");
+  // Check if blocked after 3s
+  if (window._iframeTimer) clearTimeout(window._iframeTimer);
+  window._iframeTimer = setTimeout(() => {
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc || !doc.body || doc.body.innerHTML.trim() === "") {
+        if (blocked) blocked.classList.add("show");
+        if (iframe)  iframe.style.display = "none";
+      }
+    } catch(e) {
+      if (blocked) blocked.classList.add("show");
+      if (iframe)  iframe.style.display = "none";
+    }
+  }, 3000);
 }
-function openExternal() { window.open(currentExtUrl, "_blank"); }
 
+function openExternal() { if (currentExtUrl) window.open(currentExtUrl, "_blank"); }
 
-
-// ─── Admin ────────────────────────────────────────
-async function renderAdmin() {
-  try {
-    const [uRes, rRes, pRes, sRes] = await Promise.all([
-      api("getUsers"), api("getRequests"), api("getProjects"), api("getSettings")
-    ]);
-    renderUsersTable(uRes.users);
-    renderRequestsTable(rRes.requests);
-    renderProjectsTable(pRes.projects);
-    document.getElementById("portal-name-input").value = sRes.portalName || "";
-    const pending = rRes.requests.filter(r => r.status === "pending").length;
-    document.getElementById("req-badge").style.display = pending ? "inline-block" : "none";
-  } catch(e) { showToast("Admin load error: " + e.message); }
-}
 
 function showAdminTab(tab) {
   document.querySelectorAll(".atab").forEach(t => t.classList.remove("active"));
@@ -2020,35 +2206,27 @@ let cardLiveTimer = null;
 
 function buildSafetyCard() {
   const dateFmt = ACCIDENT_DATE.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-
-  // Build static shell — IDs filled by startCardLiveCounter()
   return `
-    <div class="safety-card" onclick="openSafetyView()">
-      <div class="sc-left">
-        <div>
-          <div class="sc-badge"><span></span> Live</div>
-          <div class="sc-title">Accident Free Manhours</div>
-          <div class="sc-number" id="sc-manhours">--<sup>hrs</sup></div>
-          <div class="sc-sub">Safety &amp; Environment Dept &middot; HLL Lifecare</div>
-        </div>
+    <div class="safety-hero-card" onclick="openSafetyView()">
+      <div class="shc-left">
+        <div class="shc-badge"><span class="shc-badge-dot"></span> Live</div>
+        <div class="shc-title">Accident Free Manhours</div>
+        <div class="shc-number" id="sc-manhours">--<sup>hrs</sup></div>
+        <div class="shc-sub">Safety &amp; Environment · HLL Lifecare</div>
       </div>
-      <div class="sc-right">
-        <div class="sc-stat">
-          <div class="sc-stat-value green" id="sc-days">--</div>
-          <div class="sc-stat-label">Safe Days</div>
+      <div class="shc-right">
+        <div class="shc-stat">
+          <div class="shc-stat-v green" id="sc-days">--</div>
+          <div class="shc-stat-l">Safe Days</div>
         </div>
-        <div class="sc-stat">
-          <div class="sc-stat-value">1,500</div>
-          <div class="sc-stat-label">Workforce</div>
+        <div class="shc-stat">
+          <div class="shc-stat-v">1,500</div>
+          <div class="shc-stat-l">Workforce</div>
         </div>
-        <div class="sc-stat">
-          <div class="sc-stat-value" style="font-size:clamp(0.7rem,1.8vw,1rem)">${dateFmt}</div>
-          <div class="sc-stat-label">Last Incident</div>
+        <div class="shc-stat">
+          <div class="shc-stat-v" style="font-size:clamp(.65rem,1.6vw,.9rem)">${dateFmt}</div>
+          <div class="shc-stat-l">Last Incident</div>
         </div>
-      </div>
-      <div class="sc-open-hint">
-        <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        Open
       </div>
     </div>`;
 }
@@ -2088,16 +2266,9 @@ function stopCardLiveCounter() {
 }
 
 function openSafetyView() {
-  stopCardLiveCounter(); // stop home card while full view is open
-  // Hide other views
-  document.getElementById("projects-view").style.display = "none";
-  document.getElementById("iframe-view").classList.remove("active");
+  stopCardLiveCounter();
+  document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
   document.getElementById("safety-view").classList.add("active");
-
-  // Sidebar
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-
-  // Init counter
   safetyAnimated = false;
   updateSafetyView();
   if (safetyTimer) clearInterval(safetyTimer);
