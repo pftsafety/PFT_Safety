@@ -1016,6 +1016,88 @@ input[type="email"] {
   .ac-name { font-size: 13px; }
 }
 
+
+/* ════════════════════════════════
+   FULLSCREEN WEBVIEW
+════════════════════════════════ */
+/* When a project is open, webview covers everything */
+.app-shell.project-open .app-header { display: none; }
+.app-shell.project-open .app-views  { position: fixed; inset: 0; z-index: 100; }
+.app-shell.project-open #webview-view { display: flex; }
+
+/* Floating back button — always on top */
+.wv-float-bar {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.wv-float-bar.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+/* Reveal on hover/touch near top-left */
+.wv-float-trigger {
+  position: fixed;
+  top: 0; left: 0;
+  width: 80px; height: 56px;
+  z-index: 9998;
+}
+.wv-float-trigger:hover ~ .wv-float-bar,
+.wv-float-bar:hover { opacity: 1; transform: translateY(0); pointer-events: all; }
+
+.wv-float-back {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(13,17,23,0.88);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  padding: 7px 14px 7px 10px;
+  font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer; font-family: var(--font);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  transition: background .15s, transform .12s;
+  white-space: nowrap;
+}
+.wv-float-back:hover { background: rgba(25,30,45,0.96); }
+.wv-float-back:active { transform: scale(0.95); }
+.wv-float-back svg { flex-shrink: 0; }
+
+.wv-float-title {
+  background: rgba(13,17,23,0.75);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Safe area on iOS */
+@media (display-mode: standalone) {
+  .wv-float-bar {
+    top: calc(12px + env(safe-area-inset-top));
+  }
+}
+
+/* Remove old wv-bar (replaced by float bar) */
+.wv-bar { display: none !important; }
+
+/* iframe fills entire screen */
+#portal-iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: none; z-index: 100; }
+.wv-blocked { position: fixed; inset: 0; z-index: 101; background: linear-gradient(135deg,#0d1117,#1c2333); }
+
 </style>
 </head>
 <body>
@@ -1659,6 +1741,10 @@ function logout() {
   document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
   document.getElementById("si-username").value = "";
   resetAdminUI(); updateDots();
+  const _appShell = document.querySelector(".app-shell");
+  if (_appShell) _appShell.classList.remove("project-open");
+  const _floatBar = document.getElementById("wv-float-bar");
+  if (_floatBar) _floatBar.classList.remove("show");
   const _iframe = document.getElementById("portal-iframe");
   if (_iframe) _iframe.src = "about:blank";
   document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
@@ -1736,28 +1822,47 @@ function showLauncher() {
 function showProjects() { showLauncher(); }
 
 function openProject(id, encodedUrl) {
-  const url = decodeURIComponent(encodedUrl);
+  const url  = decodeURIComponent(encodedUrl);
   currentExtUrl = url;
-  const iframe  = document.getElementById("portal-iframe");
-  const blocked = document.getElementById("wv-blocked");
+  const iframe   = document.getElementById("portal-iframe");
+  const blocked  = document.getElementById("wv-blocked");
+  const appShell = document.querySelector(".app-shell");
 
   stopCardLiveCounter();
 
-  // Always reset blocked state
-  if (blocked) { blocked.classList.remove("show"); blocked.style.display = ""; }
+  // Get project name
+  const proj = (window._currentProjects || []).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
+  const name = proj ? proj.name : "Project";
+
+  // Update float bar title
+  const floatTitle = document.getElementById("wv-float-title");
+  if (floatTitle) floatTitle.textContent = name;
+
+  // Reset blocked state
+  if (blocked) blocked.classList.remove("show");
   if (iframe)  iframe.style.display = "block";
 
-  // Set project name in bar
-  const proj = (window._currentProjects || []).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
-  document.getElementById("wv-title").textContent = proj ? proj.name : "Project";
-
-  // Switch to webview first, then set src
+  // Switch view
   document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
   document.getElementById("webview-view").classList.add("active");
 
-  // Load the URL — sandbox without allow-same-origin stops frame-busting JS
-  // Do NOT try to read contentDocument — cross-origin access always throws,
-  // even when the site loaded fine. Just let it render.
+  // Go fullscreen — hides header, iframe covers everything
+  if (appShell) appShell.classList.add("project-open");
+
+  // Show float bar after short delay (let iframe settle)
+  const floatBar = document.getElementById("wv-float-bar");
+  if (floatBar) {
+    floatBar.classList.remove("show");
+    setTimeout(() => floatBar.classList.add("show"), 800);
+  }
+
+  // Auto-hide after 3s, re-show on top-left hover (CSS handles hover)
+  if (window._floatTimer) clearTimeout(window._floatTimer);
+  window._floatTimer = setTimeout(() => {
+    if (floatBar) floatBar.classList.remove("show");
+  }, 3000);
+
+  // Load project
   if (iframe) iframe.src = url;
 }
 
@@ -2211,6 +2316,7 @@ function openSafetyView() {
   updateSafetyView();
   if (safetyTimer) clearInterval(safetyTimer);
   safetyTimer = setInterval(updateSafetyView, 1000);
+  // Safety view has its own back button — no float bar needed
 }
 
 function updateSafetyView() {
@@ -2429,6 +2535,35 @@ async function submitChangePin() {
     errEl.textContent = msgs[e.message] || "Error: " + e.message;
   }
 }
+
+// ── Floating back bar: touch reveal ──
+(function() {
+  document.addEventListener("touchstart", function(e) {
+    const floatBar = document.getElementById("wv-float-bar");
+    if (!floatBar) return;
+    if (!document.querySelector(".app-shell.project-open")) return;
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
+    // Show if touch is near top-left (within 80x60px)
+    if (x < 80 && y < 60) {
+      floatBar.classList.add("show");
+      if (window._floatTimer) clearTimeout(window._floatTimer);
+      window._floatTimer = setTimeout(() => floatBar.classList.remove("show"), 3000);
+    }
+  }, { passive: true });
+})();
+
 </script>
+
+<!-- Floating back bar (shown when project is open) -->
+<div class="wv-float-trigger" id="wv-float-trigger"></div>
+<div class="wv-float-bar" id="wv-float-bar">
+  <button class="wv-float-back" onclick="showLauncher()">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    My Portal
+  </button>
+  <div class="wv-float-title" id="wv-float-title">Project</div>
+</div>
+
 </body>
 </html>
