@@ -1214,7 +1214,12 @@ async function checkPin() {
         _oldPinHash = hash; // save admin-given hash for verification
         setTimeout(() => { spin(false); cpnClear(); showScreen("change-pin-screen"); }, 300);
       } else {
-        setTimeout(async () => { showScreen("home-screen"); await renderHome(); spin(false); }, 300);
+        setTimeout(async () => {
+        showScreen("home-screen");
+        await renderHome();
+        spin(false);
+        showInstallBannerIfNeeded();
+      }, 300);
       }
     }
   } catch (err) {
@@ -1396,19 +1401,28 @@ function renderLauncherGrid(projects) {
   grid.insertAdjacentHTML("beforeend", fragment);
 }
 
-function showLauncher() {
+function showLauncher(fromPopState) {
   // Stop timers
   if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
+
+  // CRITICAL: exit fullscreen project mode — without this, the webview
+  // stays forced-visible via CSS (.app-shell.project-open #webview-view)
+  // even after switching .active, causing a blank white screen.
+  const appShell = document.querySelector(".app-shell");
+  if (appShell) appShell.classList.remove("project-open");
+
   // Reset iframe
   const iframe = document.getElementById("portal-iframe");
   if (iframe) iframe.src = "about:blank";
   // Reset blocked state
   const blocked = document.getElementById("wv-blocked");
-  if (blocked) { blocked.classList.remove("show"); }
-  if (iframe) iframe.style.display = "block";
+  if (blocked) blocked.classList.remove("show");
+  if (iframe)  iframe.style.display = "block";
+
   // Switch views
   document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
   document.getElementById("launcher-view").classList.add("active");
+
   // Restart safety card counter
   requestAnimationFrame(() => startCardLiveCounter());
 }
@@ -1417,18 +1431,19 @@ function showLauncher() {
 function showProjects() { showLauncher(); }
 
 function openProject(id, encodedUrl) {
-  const url  = decodeURIComponent(encodedUrl);
-  currentExtUrl = url;
+  const url      = decodeURIComponent(encodedUrl);
+  currentExtUrl  = url;
   const iframe   = document.getElementById("portal-iframe");
   const blocked  = document.getElementById("wv-blocked");
   const appShell = document.querySelector(".app-shell");
 
   stopCardLiveCounter();
 
-  // Get project name
+  // Get project name and set it in the topbar title
   const proj = (window._currentProjects || []).find(p => encodeURIComponent(p.url) === encodedUrl || p.url === url);
   const name = proj ? proj.name : "Project";
-
+  const ptTitle = document.getElementById("pt-title");
+  if (ptTitle) ptTitle.textContent = name;
 
   // Reset blocked state
   if (blocked) blocked.classList.remove("show");
@@ -1441,6 +1456,8 @@ function openProject(id, encodedUrl) {
   // Go fullscreen — hides header, iframe covers everything
   if (appShell) appShell.classList.add("project-open");
 
+  // Push history entry so device back button returns to launcher
+  history.pushState({ portalView: "project", id, encodedUrl, name }, "", location.href);
 
   // Load project
   if (iframe) iframe.src = url;
@@ -1726,15 +1743,21 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// Capture the beforeinstallprompt event
+// Capture the beforeinstallprompt event — store it, show only after login
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  // Only show if not previously dismissed
-  if (!localStorage.getItem(INSTALL_DISMISSED_KEY)) {
-    setTimeout(() => showInstallBanner(), 2000);
-  }
+  // Don't show yet — showInstallBannerIfNeeded() is called after login
 });
+
+function showInstallBannerIfNeeded() {
+  if (window.matchMedia("(display-mode: standalone)").matches) return;
+  if (navigator.standalone) return;
+  if (localStorage.getItem(INSTALL_DISMISSED_KEY)) return;
+  if (!deferredInstallPrompt && !/iphone|ipad|ipod/i.test(navigator.userAgent)) return;
+  // Delay so the home screen renders first
+  setTimeout(() => showInstallBanner(), 2500);
+}
 
 // Detect if already installed (standalone mode)
 window.addEventListener("appinstalled", () => {
@@ -1802,17 +1825,7 @@ function showiOSInstallTip() {
   setTimeout(() => tip.remove(), 8000);
 }
 
-// Auto-show iOS install hint on first visit
-(function checkiOSInstall() {
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isStandalone = window.navigator.standalone;
-  if (isIOS && !isStandalone && !localStorage.getItem(INSTALL_DISMISSED_KEY)) {
-    setTimeout(() => {
-      const banner = document.getElementById("install-banner");
-      if (banner) banner.classList.add("show");
-    }, 3000);
-  }
-})();
+// iOS install hint shown after login via showInstallBannerIfNeeded()
 
 
 
@@ -2120,19 +2133,32 @@ async function submitChangePin() {
 
 
 // ── Device back button: intercept and return to launcher ──
-window.addEventListener("popstate", function() {
+// Establish a stable base history entry on load — every view we open
+// pushes ON TOP of this, so back-navigation always has something to land on
+history.replaceState({ portalView: "base" }, "", location.href);
+
+window.addEventListener("popstate", function(e) {
   const inProject = document.querySelector(".app-shell.project-open");
   const safetyEl  = document.getElementById("safety-view");
   const inSafety  = safetyEl && safetyEl.classList.contains("active");
 
   if (inProject) {
     showLauncher(true);
-  } else if (inSafety) {
+    return;
+  }
+
+  if (inSafety) {
     if (safetyTimer) { clearInterval(safetyTimer); safetyTimer = null; safetyAnimated = false; }
     document.querySelectorAll(".app-view").forEach(v => v.classList.remove("active"));
     document.getElementById("launcher-view").classList.add("active");
     requestAnimationFrame(() => startCardLiveCounter());
+    return;
   }
+
+  // Already at the base/launcher state and back was pressed again.
+  // Re-establish the SAME state (replaceState, not push) so the history
+  // stack never grows unbounded and we never fall through to a blank page.
+  history.pushState({ portalView: "base" }, "", location.href);
 });
 
 </script>
