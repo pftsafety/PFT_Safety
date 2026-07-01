@@ -16,11 +16,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="My Portal"/>
-<meta name="theme-color" content="#1e2433"/>
+<meta name="theme-color" content="#0d1117"/>
 <meta name="description" content="My Projects Portal — secure MPIN access"/>
 <title>My Portal</title>
 <link rel="manifest" href="./manifest.json"/>
-<link rel="apple-touch-icon" href="./icon-192.png"/>
+<link rel="apple-touch-icon" href="./apple-touch-icon.png"/>
 <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -137,18 +137,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
 .lock-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.28),rgba(255,255,255,0.07));border:1.5px solid rgba(255,255,255,0.45);box-shadow:0 4px 20px rgba(0,0,0,0.2),0 1px 0 rgba(255,255,255,0.55) inset;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:.9rem}
 .lock-title{font-size:19px;font-weight:600;color:#fff;letter-spacing:-.3px;margin-bottom:3px;text-align:center}
 .lock-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:1.5rem;text-align:center}
-.pin-dots{display:flex;gap:13px;margin-bottom:1.4rem}
-.dot{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.38);background:transparent;transition:all .15s cubic-bezier(.34,1.56,.64,1)}
-.dot.filled{background:#fff;border-color:#fff;transform:scale(1.15);box-shadow:0 0 10px rgba(255,255,255,0.55)}
-.dot.error{background:#f87171;border-color:#f87171;box-shadow:0 0 10px rgba(248,113,113,0.55)}
-.dot.success{background:#34d399;border-color:#34d399;box-shadow:0 0 10px rgba(52,211,153,0.55)}
-.keypad{display:grid;grid-template-columns:repeat(3,66px);gap:9px}
-.key{height:54px;background:rgba(255,255,255,0.11);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.26);border-radius:13px;font-size:21px;font-weight:400;color:#fff;cursor:pointer;transition:all .12s ease;display:flex;align-items:center;justify-content:center;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.14),0 1px 0 rgba(255,255,255,0.22) inset;position:relative;overflow:hidden}
-.key::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.11) 0%,transparent 60%);pointer-events:none}
-.key:hover{background:rgba(255,255,255,0.2);transform:scale(1.04)}
-.key:active{transform:scale(0.93)}
-.key.action{font-size:12px;color:rgba(255,255,255,0.65)}
-.key.action svg{width:19px;height:19px;fill:none;stroke:rgba(255,255,255,0.72);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .lock-err{font-size:12px;color:#fca5a5;min-height:17px;margin-top:.55rem;text-align:center}
 .admin-toggle{margin-top:1.1rem;font-size:12px;color:rgba(255,255,255,0.38);cursor:pointer;transition:color .15s;text-align:center}
 .admin-toggle:hover{color:rgba(255,255,255,0.7)}
@@ -383,10 +371,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
     overflow-y: auto;
   }
 
-  /* KEYPAD: bigger tap targets */
-  .keypad { grid-template-columns: repeat(3, 72px); gap: 10px; }
-  .key    { height: 58px; font-size: 22px; border-radius: 14px; }
-  .dot    { width: 14px; height: 14px; }
 
   /* AUTH TABS */
   .auth-tabs { margin-bottom: 1.25rem; }
@@ -436,8 +420,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,#0d1117 0%,#161b2
 
 /* ── Small phone (≤380px) ── */
 @media (max-width: 380px) {
-  .keypad { grid-template-columns: repeat(3, 64px); gap: 8px; }
-  .key    { height: 54px; }
   #launcher-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .ac-icon { width: 46px; height: 46px; font-size: 20px; }
 }
@@ -689,6 +671,72 @@ input, select, textarea {
 .install-dismiss { font-size:18px; color:rgba(255,255,255,0.3); cursor:pointer; padding:4px; flex-shrink:0; transition:color .15s; }
 .install-dismiss:hover { color:rgba(255,255,255,0.7); }
 
+
+/* ══════════════════════════════
+   PIN INPUT BOXES (replaces keypad)
+══════════════════════════════ */
+.pin-input-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+.pin-input-box {
+  width: 52px;
+  height: 60px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.16);
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  font-family: var(--font);
+  outline: none;
+  caret-color: #5e9eff;
+  transition: border-color .15s, background .15s, transform .15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.08) inset;
+  -webkit-appearance: none;
+}
+.pin-input-box::-ms-reveal,
+.pin-input-box::-ms-clear { display: none; }
+.pin-input-box:focus {
+  background: rgba(255,255,255,0.14);
+  border-color: rgba(59,130,246,0.65);
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.14), 0 2px 8px rgba(0,0,0,0.12);
+}
+.pin-input-box.filled {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.3);
+}
+.pin-input-box.error {
+  border-color: #f87171;
+  background: rgba(248,113,113,0.1);
+  animation: pinShake .4s ease;
+}
+.pin-input-box.success {
+  border-color: #34d399;
+  background: rgba(52,211,153,0.1);
+  box-shadow: 0 0 0 4px rgba(52,211,153,0.14);
+}
+.pin-input-box:disabled { opacity: .4; }
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+/* Sign-in submit button — subtler than the primary form submit */
+#signin-continue-btn {
+  width: 100%;
+  padding: 11px;
+  font-size: 14px;
+}
+
 </style>
 </head>
 <body>
@@ -754,20 +802,8 @@ input, select, textarea {
           <label class="field-label">Username</label>
           <input class="field-input" id="si-username" placeholder="" autocomplete="username" autocapitalize="off" spellcheck="false">
         </div>
-        <div class="pin-dots" id="dots">
-          <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
-          <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
-        </div>
-        <div class="keypad">
-          <button class="key" onclick="pressKey('1')">1</button><button class="key" onclick="pressKey('2')">2</button><button class="key" onclick="pressKey('3')">3</button>
-          <button class="key" onclick="pressKey('4')">4</button><button class="key" onclick="pressKey('5')">5</button><button class="key" onclick="pressKey('6')">6</button>
-          <button class="key" onclick="pressKey('7')">7</button><button class="key" onclick="pressKey('8')">8</button><button class="key" onclick="pressKey('9')">9</button>
-          <button class="key action" onclick="clearPin()">Clear</button>
-          <button class="key" onclick="pressKey('0')">0</button>
-          <button class="key action" onclick="backspace()">
-            <svg viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>
-          </button>
-        </div>
+        <div class="pin-input-row" id="pin-input-row"></div>
+        <button class="submit-btn" id="signin-continue-btn" onclick="manualSubmitPin()" style="margin-bottom:.4rem">Sign In</button>
         <p class="lock-err" id="err-msg"></p>
         <p class="lock-err" id="lockout-msg" style="color:#fbbf24"></p>
         <p class="admin-toggle" id="admin-toggle" onclick="toggleAdminMode()">Sign in as admin</p>
@@ -861,7 +897,7 @@ input, select, textarea {
     <p class="cpn-title">Set a New PIN</p>
     <p class="cpn-sub">Your admin has reset your PIN. You must choose a new one before continuing.</p>
     <div class="cpn-banner">
-      <svg width="14" height="14" fill="none" stroke="#fcd34d" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <svg width="14" height="14" fill="none" stroke="#fcd34d" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       This is a one-time change. Your admin-given PIN will no longer work after this.
     </div>
     <p class="cpn-step-label">New 4-digit MPIN</p>
@@ -1006,6 +1042,9 @@ input, select, textarea {
         <div class="atab" onclick="showAdminTab('projects')" id="tab-projects">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Projects
         </div>
+        <div class="atab" onclick="showAdminTab('activity')" id="tab-activity">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Activity
+        </div>
         <div class="atab" onclick="showAdminTab('settings')" id="tab-settings">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
         </div>
@@ -1023,7 +1062,7 @@ input, select, textarea {
             <button class="btn btn-primary" onclick="addUser()">+ Add User</button>
           </div>
           <div class="a-card" style="padding:.5rem 0">
-            <table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Status</th><th>Source</th><th>Created</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table>
+            <table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Status</th><th>Source</th><th>Last Login</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table>
           </div>
         </div>
         <!-- REQUESTS -->
@@ -1051,6 +1090,22 @@ input, select, textarea {
             <table class="data-table"><thead><tr><th>Icon</th><th>Name</th><th>URL</th><th>Actions</th></tr></thead><tbody id="projects-tbody"></tbody></table>
           </div>
         </div>
+        <!-- ACTIVITY -->
+        <div class="admin-section" id="admin-activity">
+          <div class="section-title">Login Activity</div>
+          <div class="a-card" style="padding:.75rem 1rem">
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6">
+              Shows the most recent 30 sign-ins across all users and admin. Newest first.
+            </div>
+          </div>
+          <div class="a-card" style="padding:0.5rem 0">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Role</th><th>Username</th><th>Signed in</th></tr></thead>
+              <tbody id="activity-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- SETTINGS -->
         <div class="admin-section" id="admin-settings">
           <div class="section-title">Settings</div>
@@ -1142,8 +1197,10 @@ function switchAuthTab(tab) {
     document.getElementById("panel-" + t).classList.toggle("active", t === tab);
   });
   if (tab === "signin") {
-    currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = "";
-    if(adminMode) { adminMode=false; resetAdminUI(); }
+    clearPinBoxes();
+    document.getElementById("err-msg").textContent = "";
+    if (adminMode) { adminMode = false; resetAdminUI(); }
+    renderPinBoxes(pinLength);
     // Ensure forgot form is hidden
     const fw = document.getElementById("forgot-form-wrap");
     const fs = document.getElementById("fp-success");
@@ -1155,42 +1212,103 @@ function switchAuthTab(tab) {
   if (tab === "signup") resetSignupForm();
 }
 
-// ─── Keypad ───────────────────────────────────────
 function toggleAdminMode() {
   adminMode = !adminMode;
-  currentPin = ""; document.getElementById("err-msg").textContent = "";
+  document.getElementById("err-msg").textContent = "";
   document.getElementById("lockout-msg").textContent = "";
-  if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = ""); }
+  if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; setPinBoxesDisabled(false); }
   if (adminMode) {
     pinLength = 6;
-    document.getElementById("dots").innerHTML = Array.from({length:6},(_,i)=>`<div class="dot" id="d${i}"></div>`).join("");
     document.getElementById("lock-subtitle").textContent = "Enter 6-digit Admin PIN";
     document.getElementById("admin-toggle").textContent  = "← Back to user login";
     document.getElementById("signin-username-field").style.display = "none";
     document.getElementById("remembered-chip").style.display = "none";
-  } else { resetAdminUI(); }
-  updateDots();
+  } else {
+    resetAdminUI();
+  }
+  renderPinBoxes(pinLength);
 }
+
 function resetAdminUI() {
   adminMode = false; pinLength = 4;
-  document.getElementById("dots").innerHTML = Array.from({length:4},(_,i)=>`<div class="dot" id="d${i}"></div>`).join("");
-  document.getElementById("admin-toggle").textContent  = "Sign in as admin";
+  document.getElementById("admin-toggle").textContent = "Sign in as admin";
   applyRememberedUsername();
 }
 
-function pressKey(k) {
-  if (currentPin.length >= pinLength) return;
-  currentPin += k; updateDots();
-  if (currentPin.length === pinLength) setTimeout(checkPin, 130);
+// ── PIN input boxes (replaces on-screen keypad) ──
+function renderPinBoxes(length) {
+  const row = document.getElementById("pin-input-row");
+  if (!row) return;
+  const boxSize = length > 4 ? 42 : 52;
+  row.innerHTML = Array.from({length}, (_, i) => `
+    <input class="pin-input-box" id="si${i}" type="password" inputmode="numeric"
+      pattern="[0-9]*" maxlength="1" autocomplete="one-time-code"
+      style="width:${boxSize}px;height:${boxSize+8}px"
+      oninput="siPinInput(${i})" onkeydown="siPinKey(event,${i})"
+      onpaste="siPinPaste(event)">
+  `).join("");
+  currentPin = "";
+  setTimeout(() => document.getElementById("si0")?.focus(), 60);
 }
-function updateDots(state) {
-  for (let i = 0; i < pinLength; i++) {
-    const d = document.getElementById("d" + i); if (!d) continue;
-    d.className = "dot" + (i < currentPin.length ? " " + (state || "filled") : "");
+
+function siPinInput(i) {
+  const el = document.getElementById("si" + i);
+  if (!el) return;
+  const v = el.value.replace(/\D/g, "");
+  el.value = v;
+  el.classList.toggle("filled", v !== "");
+  if (v && i < pinLength - 1) document.getElementById("si" + (i + 1))?.focus();
+  updateCurrentPinFromBoxes();
+  if (currentPin.length === pinLength) {
+    el.blur();
+    setTimeout(checkPin, 130);
   }
 }
-function clearPin()  { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; }
-function backspace() { currentPin = currentPin.slice(0, -1); updateDots(); }
+
+function siPinKey(e, i) {
+  if (e.key === "Backspace") {
+    const el = document.getElementById("si" + i);
+    if (el && !el.value && i > 0) document.getElementById("si" + (i - 1))?.focus();
+  } else if (e.key === "Enter") {
+    manualSubmitPin();
+  }
+}
+
+function siPinPaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, pinLength);
+  if (!text) return;
+  for (let i = 0; i < pinLength; i++) {
+    const el = document.getElementById("si" + i);
+    if (!el) continue;
+    el.value = text[i] || "";
+    el.classList.toggle("filled", !!text[i]);
+  }
+  updateCurrentPinFromBoxes();
+  const nextIdx = Math.min(text.length, pinLength - 1);
+  document.getElementById("si" + nextIdx)?.focus();
+  if (currentPin.length === pinLength) setTimeout(checkPin, 130);
+}
+
+function updateCurrentPinFromBoxes() {
+  currentPin = Array.from({length: pinLength}, (_, i) => document.getElementById("si" + i)?.value || "").join("");
+}
+
+function setPinBoxesDisabled(disabled) {
+  for (let i = 0; i < pinLength; i++) {
+    const el = document.getElementById("si" + i);
+    if (el) el.disabled = disabled;
+  }
+}
+
+function manualSubmitPin() {
+  updateCurrentPinFromBoxes();
+  if (currentPin.length !== pinLength) {
+    document.getElementById("err-msg").textContent = `Please enter your complete ${pinLength}-digit PIN`;
+    return;
+  }
+  checkPin();
+}
 
 async function checkPin() {
   spin(true);
@@ -1199,32 +1317,38 @@ async function checkPin() {
     if (adminMode) {
       const res = await apiRaw("loginAdmin", { pinHash: hash });
       if (!res.ok) { spin(false); handleAuthError(res); return; }
-      updateDots("success");
+      markPinBoxes("success");
       setTimeout(async () => { showScreen("admin-screen"); await renderAdmin(); spin(false); }, 300);
     } else {
       const username = document.getElementById("si-username").value.trim();
       if (!username) { spin(false); badPin("Please enter your username"); return; }
       const res = await apiRaw("loginUser", { username, pinHash: hash });
       if (!res.ok) { spin(false); handleAuthError(res); return; }
-      updateDots("success");
+      markPinBoxes("success");
       currentUser = res.user;
       localStorage.setItem(REMEMBER_KEY, res.user.username || username);
       if (res.user.mustChangePin) {
-        // Force PIN change before entering portal
-        _oldPinHash = hash; // save admin-given hash for verification
+        _oldPinHash = hash;
         setTimeout(() => { spin(false); cpnClear(); showScreen("change-pin-screen"); }, 300);
       } else {
         setTimeout(async () => {
-        showScreen("home-screen");
-        await renderHome();
-        spin(false);
-        showInstallBannerIfNeeded();
-      }, 300);
+          showScreen("home-screen");
+          await renderHome();
+          spin(false);
+          showInstallBannerIfNeeded();
+        }, 300);
       }
     }
   } catch (err) {
     spin(false);
     badPin("Error: " + err.message);
+  }
+}
+
+function markPinBoxes(state) {
+  for (let i = 0; i < pinLength; i++) {
+    const el = document.getElementById("si" + i);
+    if (el) el.classList.add(state);
   }
 }
 
@@ -1248,10 +1372,12 @@ function handleAuthError(res) {
 }
 
 function startLockoutCountdown(seconds) {
-  currentPin = ""; updateDots();
+  clearPinBoxes();
   document.getElementById("err-msg").textContent = "";
   const lockEl = document.getElementById("lockout-msg");
-  document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "none");
+  setPinBoxesDisabled(true);
+  const btn = document.getElementById("signin-continue-btn");
+  if (btn) btn.disabled = true;
   let remaining = Math.ceil(seconds);
   const tick = () => {
     lockEl.textContent = `Too many attempts. Try again in ${remaining}s`;
@@ -1259,7 +1385,9 @@ function startLockoutCountdown(seconds) {
       clearInterval(lockoutInterval);
       lockoutInterval = null;
       lockEl.textContent = "";
-      document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
+      setPinBoxesDisabled(false);
+      if (btn) btn.disabled = false;
+      document.getElementById("si0")?.focus();
       return;
     }
     remaining--;
@@ -1269,10 +1397,22 @@ function startLockoutCountdown(seconds) {
   lockoutInterval = setInterval(tick, 1000);
 }
 
+function clearPinBoxes() {
+  currentPin = "";
+  for (let i = 0; i < pinLength; i++) {
+    const el = document.getElementById("si" + i);
+    if (el) { el.value = ""; el.classList.remove("filled", "error", "success"); }
+  }
+}
+
 function badPin(msg) {
-  updateDots("error");
+  markPinBoxes("error");
   document.getElementById("err-msg").textContent = msg;
-  setTimeout(() => { currentPin = ""; updateDots(); document.getElementById("err-msg").textContent = ""; }, 1100);
+  setTimeout(() => {
+    clearPinBoxes();
+    document.getElementById("err-msg").textContent = "";
+    document.getElementById("si0")?.focus();
+  }, 1100);
 }
 
 // ─── PIN boxes (signup) ───────────────────────────
@@ -1340,9 +1480,10 @@ function logout() {
   stopCardLiveCounter();
   if (lockoutInterval) { clearInterval(lockoutInterval); lockoutInterval = null; }
   document.getElementById("lockout-msg").textContent = "";
-  document.querySelectorAll(".keypad .key").forEach(k => k.style.pointerEvents = "");
+  setPinBoxesDisabled(false);
   document.getElementById("si-username").value = "";
-  resetAdminUI(); updateDots();
+  resetAdminUI();
+  renderPinBoxes(pinLength);
   const _appShell = document.querySelector(".app-shell");
   if (_appShell) _appShell.classList.remove("project-open");
   const _iframe = document.getElementById("portal-iframe");
@@ -1466,21 +1607,66 @@ function openProject(id, encodedUrl) {
 function openExternal() { if (currentExtUrl) window.open(currentExtUrl, "_blank"); }
 
 
+async function renderAdmin() {
+  try {
+    const [uRes, rRes, pRes, sRes, lRes] = await Promise.all([
+      api("getUsers"),
+      api("getRequests"),
+      api("getProjects"),
+      api("getSettings"),
+      api("getLoginLogs")
+    ]);
+    renderUsersTable(uRes.users);
+    renderRequestsTable(rRes.requests);
+    renderProjectsTable(pRes.projects);
+    renderActivityTable(lRes.logs);
+    const nameEl = document.getElementById("portal-name-input");
+    if (nameEl) nameEl.value = sRes.portalName || "";
+    const pending = (rRes.requests || []).filter(r => r.status === "pending").length;
+    const badge = document.getElementById("req-badge");
+    if (badge) badge.style.display = pending ? "inline-block" : "none";
+  } catch(e) {
+    showToast("Admin load error: " + e.message);
+  }
+}
+
 function showAdminTab(tab) {
   document.querySelectorAll(".atab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".admin-section").forEach(s => s.classList.remove("active"));
   document.getElementById("tab-" + tab).classList.add("active");
   document.getElementById("admin-" + tab).classList.add("active");
-  // refresh on tab click
-  if (tab === "users")    api("getUsers").then(r=>renderUsersTable(r.users)).catch(()=>{});
-  if (tab === "requests") api("getRequests").then(r=>renderRequestsTable(r.requests)).catch(()=>{});
-  if (tab === "projects") api("getProjects").then(r=>renderProjectsTable(r.projects)).catch(()=>{});
+  // Refresh data on tab click
+  if (tab === "users")    api("getUsers").then(r => renderUsersTable(r.users)).catch(()=>{});
+  if (tab === "requests") api("getRequests").then(r => renderRequestsTable(r.requests)).catch(()=>{});
+  if (tab === "projects") api("getProjects").then(r => renderProjectsTable(r.projects)).catch(()=>{});
+  if (tab === "settings") api("getSettings").then(s => {
+    const el = document.getElementById("portal-name-input");
+    if (el) el.value = s.portalName || "";
+  }).catch(()=>{});
+  if (tab === "activity") api("getLoginLogs").then(r => renderActivityTable(r.logs)).catch(()=>{});
 }
 
 function fmtDate(iso) {
   if (!iso) return "—";
   const d = new Date(iso);
   return isNaN(d) ? iso : d.toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+}
+
+function fmtDateTime(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  const now = new Date();
+  const diffMs  = now - d;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHr  = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffMin < 1)   return "Just now";
+  if (diffMin < 60)  return diffMin + "m ago";
+  if (diffHr  < 24)  return diffHr + "h ago";
+  if (diffDay < 7)   return diffDay + "d ago";
+  return d.toLocaleDateString("en-IN", {day:"2-digit",month:"short"}) + " · " +
+         d.toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit"});
 }
 
 function renderUsersTable(users) {
@@ -1495,7 +1681,7 @@ function renderUsersTable(users) {
         ${u.locked?'<span class="badge badge-red" style="margin-left:4px">🔒 locked</span>':''}
       </td>
       <td><span class="badge badge-blue">${u.source||'admin'}</span></td>
-      <td style="color:rgba(255,255,255,0.4);font-size:12px">${fmtDate(u.created_at)}</td>
+      <td style="color:rgba(255,255,255,0.4);font-size:12px">${u.last_login ? fmtDateTime(u.last_login) : 'Never'}</td>
       <td style="display:flex;gap:6px;flex-wrap:wrap">
         ${u.status==='approved'
           ?`<button class="btn btn-danger btn-sm" onclick="setUserStatus('${u.id}','blocked')">Block</button>`
@@ -1533,6 +1719,22 @@ async function unlockUser(id) {
   spin(true);
   try { await api("unlockUser",{id}); const r=await api("getUsers"); renderUsersTable(r.users); showToast("Unlocked ✓"); }
   catch(e){ showToast("Error: "+e.message); } spin(false);
+}
+
+function renderActivityTable(logs) {
+  const tbody = document.getElementById("activity-tbody");
+  if (!tbody) return;
+  if (!logs || !logs.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:1.5rem">No login activity yet</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = logs.map(l => `
+    <tr>
+      <td style="font-weight:500;color:#fff">${l.name || '—'}</td>
+      <td><span class="badge ${l.role==='admin'?'badge-red':'badge-blue'}">${l.role==='admin'?'🛡️ Admin':'User'}</span></td>
+      <td style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5)">${l.username || '—'}</td>
+      <td style="color:rgba(255,255,255,0.45);font-size:12px">${fmtDateTime(l.timestamp)}</td>
+    </tr>`).join("");
 }
 
 async function addUser() {
@@ -1703,6 +1905,7 @@ window.addEventListener("load", () => {
   if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_APPS_SCRIPT")) {
     document.getElementById("config-banner").classList.add("show");
   }
+  renderPinBoxes(pinLength);
   applyRememberedUsername();
   // Load portal name into branding panel
   api("getSettings").then(s => {
