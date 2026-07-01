@@ -1,5 +1,5 @@
 // Portal PWA Service Worker v5
-const CACHE = "portal-v5";
+const CACHE = "portal-v6";
 
 self.addEventListener("install", e => {
   self.skipWaiting();
